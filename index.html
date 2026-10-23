@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Eco Hero Sentence Race</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;700;800&family=Sarabun:wght@400;600;700&family=Nunito:wght@700;800;900&display=swap">
+<style>
+/* Layout: a printed felt "Sentence Mat" is the hero object; everything else is a quiet paper desk around it. */
+:root{
+  --bg:#EDF2EC; --surface:#FFFFFF; --ink:#13241B; --muted:#56685E; --line:#C9D6CB;
+  --accent:#0E6A4C; --accent-ink:#FFFFFF; --mat:#22303A; --mat-line:#5E7180; --mat-ink:#E8EEF2;
+  --ok:#14864F; --bad:#C2331F; --gold:#E3A008;
+  /* card colours are fixed: they must match the printed cards */
+  --y:#FFD43B; --y-ink:#3A2E00;
+  --p:#FF93C3; --p-ink:#4A0F2B;
+  --r:#B0122E; --r-ink:#FFFFFF;
+  --lb:#8ED3FF; --lb-ink:#062A44;
+  --db:#1B3EA8; --db-ink:#FFFFFF;
+  --g:#3BBE69; --g-ink:#052814;
+  --display:"Kanit","Sarabun",system-ui,sans-serif;
+  --body:"Sarabun","Nunito",system-ui,sans-serif;
+  --card:"Nunito","Sarabun",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101814; --surface:#18231D; --ink:#E6EEE8; --muted:#9DB0A5; --line:#2C3B33;
+  --accent:#3FC490; --accent-ink:#06150F; --mat:#0B1218; --mat-line:#3E505D; --mat-ink:#DCE6EC;
+  --ok:#3FD08A; --bad:#FF6B57; --gold:#F5C443; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101814; --surface:#18231D; --ink:#E6EEE8; --muted:#9DB0A5; --line:#2C3B33;
+  --accent:#3FC490; --accent-ink:#06150F; --mat:#0B1218; --mat-line:#3E505D; --mat-ink:#DCE6EC;
+  --ok:#3FD08A; --bad:#FF6B57; --gold:#F5C443; color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 48px}
+h1,h2,h3{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(28px,4.6vw,48px);font-weight:800;letter-spacing:-.01em}
+h2{font-size:clamp(20px,2.6vw,28px);font-weight:700}
+h3{font-size:18px;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted)}
+.eyebrow{font-family:var(--display);font-weight:500;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.stack{display:flex;flex-direction:column;gap:14px}
+.btn{font-family:var(--display);font-weight:700;font-size:17px;border:2px solid var(--ink);background:var(--surface);color:var(--ink);border-radius:12px;padding:10px 18px;cursor:pointer;min-height:46px}
+.btn:hover{transform:translateY(-1px)}
+.btn:focus-visible,.chip:focus-visible,.card:focus-visible,.slot:focus-visible,.flip:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.big{font-size:22px;padding:14px 26px;min-height:60px}
+.btn.ghost{border-color:var(--line);font-weight:500}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.brand{font-family:var(--display);font-weight:800;font-size:18px;display:flex;align-items:center;gap:8px}
+.brand i{display:inline-flex;gap:3px}
+.brand i b{width:10px;height:16px;border-radius:3px;display:block}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;font-weight:600;z-index:50;max-width:calc(100% - 32px)}
+
+/* ---- home ---- */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center;margin-bottom:26px}
+.hero > *{min-width:0}
+.roles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:8px 0 30px}
+.role{text-align:left;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:16px;padding:18px;cursor:pointer;display:flex;flex-direction:column;gap:6px;font-family:var(--body)}
+.role:hover{border-color:var(--accent)}
+.role strong{font-family:var(--display);font-size:21px}
+.role .tag{font-family:var(--display);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.rules ol{margin:8px 0 0;padding-left:22px;display:grid;gap:4px}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+.lg{display:flex;gap:10px;align-items:center;font-size:15px}
+.sw{width:30px;height:22px;border-radius:5px;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.tablewrap{overflow-x:auto}
+table.set{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+table.set th{font-family:var(--display);font-weight:500;text-align:left;color:var(--muted);padding:6px 6px;border-bottom:1px solid var(--line);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+table.set td{padding:6px;border-bottom:1px solid var(--line);vertical-align:middle}
+.mini{display:inline-flex;flex-direction:column;border-radius:6px;overflow:hidden;font-family:var(--card);font-weight:800;font-size:13px;line-height:1.2;min-width:70px}
+.mini span{padding:4px 7px}
+
+/* ---- cards ---- */
+.card{position:relative;font-family:var(--card);font-weight:800;border-radius:10px;padding:10px 12px;min-height:54px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;border:none;font-size:17px;line-height:1.15;box-shadow:0 2px 0 rgba(0,0,0,.25);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.card.two{padding-right:40px}
+.card.sel{outline:4px solid var(--gold);outline-offset:2px;transform:translateY(-3px)}
+.c-y{background:var(--y);color:var(--y-ink)} .c-p{background:var(--p);color:var(--p-ink)} .c-r{background:var(--r);color:var(--r-ink)}
+.c-lb{background:var(--lb);color:var(--lb-ink)} .c-db{background:var(--db);color:var(--db-ink)} .c-g{background:var(--g);color:var(--g-ink)}
+.flip{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:8px;border:none;background:rgba(255,255,255,.55);color:#111;font-size:17px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.side-tag{position:absolute;left:6px;top:3px;font-size:9px;letter-spacing:.08em;opacity:.7;font-weight:900}
+.flip{pointer-events:none}
+.tray .card{touch-action:pan-y}
+.slot .card{touch-action:none}
+.card.dragging{opacity:.25}
+.card.ghost{position:fixed;left:0;top:0;pointer-events:none;z-index:60;transform:translate(-50%,-50%) rotate(-3deg) scale(1.06);box-shadow:0 12px 26px rgba(0,0,0,.35);margin:0}
+.card.flipin{animation:flipin .22s ease-out}
+@keyframes flipin{from{transform:perspective(400px) rotateY(90deg)}to{transform:none}}
+.slot.hover{border-color:var(--gold);border-style:solid;background:rgba(255,212,59,.14)}
+.trayside.hover{box-shadow:inset 0 0 0 3px var(--gold)}
+.howto{font-size:13px;color:var(--muted);font-weight:500;font-family:var(--body)}
+@media (max-width:700px){.tray .card{touch-action:none}}
+
+/* ---- mat ---- */
+.mat{background:var(--mat);color:var(--mat-ink);border-radius:18px;padding:16px;display:grid;gap:12px;box-shadow:inset 0 0 0 2px var(--mat-line)}
+.clause{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) 18px;gap:10px;align-items:stretch}
+.clause-label{font-family:var(--display);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mat-ink);opacity:.75;grid-column:1/-1;margin-bottom:-4px}
+.slot{border:2px dashed var(--mat-line);border-radius:12px;min-height:96px;display:flex;flex-direction:column;justify-content:space-between;gap:6px;padding:7px;cursor:pointer;background:transparent;color:var(--mat-ink);font-family:var(--body);text-align:left}
+.slot.armed{border-color:var(--gold);border-style:solid}
+.slot .lbl{font-family:var(--display);font-size:12px;font-weight:500;display:flex;justify-content:space-between;gap:4px;align-items:center}
+.slot .dots{display:flex;gap:3px}
+.slot .dots b{width:13px;height:13px;border-radius:3px;display:block}
+.slot .card{min-height:52px;width:100%}
+.slot.ok{border:3px solid var(--ok)} .slot.bad{border:3px solid var(--bad)}
+.punct{font-family:var(--card);font-weight:900;font-size:34px;align-self:end;color:var(--mat-ink)}
+.pattern{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--mat-ink);opacity:.9}
+.pattern span{display:inline-flex;gap:3px;align-items:center}
+.pattern b{width:12px;height:12px;border-radius:2px;display:inline-block}
+
+/* ---- tray ---- */
+.trayhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0 8px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 12px;border-radius:99px;font-family:var(--display);font-size:14px;cursor:pointer;min-height:36px;display:inline-flex;align-items:center;gap:6px}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tray{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+
+/* ---- game screens ---- */
+.board{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 22px;display:grid;gap:10px}
+.board .meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.prompt{font-family:var(--card);font-weight:900;font-size:clamp(22px,3.6vw,44px);line-height:1.25;text-wrap:balance}
+.prompt.th{font-family:var(--body);font-weight:700}
+.prompt w{border-radius:8px;padding:0 6px;margin:0 1px;display:inline-block}
+.timer{font-family:var(--display);font-weight:800;font-size:clamp(30px,5vw,60px);font-variant-numeric:tabular-nums;line-height:1}
+.pill{font-family:var(--display);font-size:14px;padding:4px 12px;border-radius:99px;border:1.5px solid currentColor;display:inline-block}
+.pill.t1{color:#0B6FB0} .pill.t2{color:var(--db)}
+:root[data-theme="dark"] .pill.t2{color:#8FA8FF}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pill.t2{color:#8FA8FF}}
+.grid2{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px;align-items:start;margin-top:16px}
+.lb{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.lb li{display:grid;grid-template-columns:44px 1fr auto auto;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--bg);border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.lb li.win{border:2px solid var(--gold)}
+.lb li.me{box-shadow:inset 4px 0 0 var(--accent)}
+.lb .rk{font-family:var(--display);font-weight:800;font-size:22px;text-align:center}
+.lb .nm{font-family:var(--display);font-weight:700;font-size:18px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb .sec{font-family:var(--display);font-weight:700;font-size:18px}
+.mark{font-weight:900;font-size:20px}
+.mark.ok{color:var(--ok)} .mark.bad{color:var(--bad)} .mark.wait{color:var(--muted);font-size:14px}
+.count{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 80%,transparent);z-index:40;font-family:var(--display);font-weight:800;font-size:min(40vw,260px);color:var(--accent)}
+.answer{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-family:var(--card);font-weight:900}
+.answer .card{min-height:40px;font-size:15px;cursor:default;box-shadow:none}
+.teams{display:flex;gap:8px;flex-wrap:wrap}
+.teams span{padding:5px 12px;border-radius:99px;background:var(--bg);border:1px solid var(--line);font-family:var(--display);font-size:14px}
+.teamgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.teamgrid button{min-height:70px}
+.scorebar{display:flex;gap:8px;flex-wrap:wrap}
+.scorebar span{font-family:var(--display);font-size:14px;padding:4px 10px;border-radius:8px;background:var(--bg);border:1px solid var(--line)}
+.podium{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:end;text-align:center;margin:12px 0}
+.podium div{border-radius:14px 14px 0 0;padding:14px 8px;background:var(--bg);border:1px solid var(--line);font-family:var(--display)}
+.podium .p1{min-height:180px;border:2px solid var(--gold)} .podium .p2{min-height:140px} .podium .p3{min-height:110px}
+.podium strong{display:block;font-size:22px}
+select,input[type=text]{font:inherit;font-size:16px;padding:9px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);min-height:44px;max-width:100%}
+label.tg{display:inline-flex;gap:8px;align-items:center;font-size:15px;cursor:pointer}
+.ticker{font-size:15px;color:var(--muted);min-height:24px}
+
+/* ---- play layout: cards left, mat right, no page scrolling ---- */
+.board.compact{padding:10px 18px;gap:4px}
+.board.compact .prompt{font-size:clamp(20px,2.5vw,32px)}
+.board.compact .timer{font-size:clamp(26px,3.2vw,40px)}
+.livechips{display:flex;gap:6px;flex-wrap:wrap;min-height:28px;align-items:center}
+.livechips span{font-family:var(--display);font-size:14px;padding:3px 10px;border-radius:99px;background:var(--bg);border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.playgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:16px;margin-top:12px;align-items:start}
+.traypanel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:0 12px 12px;height:calc(100dvh - 250px);min-height:340px;overflow-y:auto;overscroll-behavior:contain}
+.traypanel .trayhead{position:sticky;top:0;background:var(--surface);margin:0 -12px 10px;padding:12px;z-index:2;border-bottom:1px solid var(--line)}
+.traypanel .tray{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.matcol{display:flex;flex-direction:column;gap:12px}
+.matcol .scorebar{margin-top:-4px}
+.play .topbar{margin-bottom:10px}
+.wrap:has(.play){padding-block:12px 12px}
+@media (max-width:760px){
+  .playgrid{grid-template-columns:1fr}
+  .matcol{order:-1;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-bottom:8px}
+  .traypanel{height:auto;min-height:0;overflow:visible}
+  .traypanel .trayhead{position:static}
+}
+/* ---- side-by-side play layout: cards left, mat right, fits one screen ---- */
+.wrap.fit{padding-block:10px}
+.wrap.fit .topbar{margin-bottom:10px}
+.wrap.fit .btn.ghost{min-height:40px;padding:6px 14px;font-size:15px}
+.game{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.12fr);gap:14px;height:calc(100dvh - 96px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:480px}
+.game > .col{min-width:0;min-height:0;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:10px}
+.trayside{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:0 12px 12px}
+.trayside .trayhead{margin:0 -12px 10px;padding:10px 12px 8px;position:sticky;top:0;background:var(--surface);z-index:2;border-bottom:1px solid var(--line);border-radius:16px 16px 0 0}
+.trayside .tray{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.trayside .card{min-height:48px;font-size:16px}
+.sentmsg{margin:auto;text-align:center;padding:24px}
+.matcol{container-type:inline-size;padding-right:2px}
+.board.compact{padding:10px 16px;gap:4px;border-radius:14px}
+.board.compact .prompt{font-size:clamp(19px,2.2vw,30px)}
+.board.compact .timer{font-size:clamp(26px,3vw,40px)}
+.matcol .mat{padding:12px;gap:8px}
+.matcol .slot{min-height:84px}
+.lb.compact li{padding:6px 10px}
+.lb.compact .rk{font-size:18px}.lb.compact .nm,.lb.compact .sec{font-size:16px}
+@container (max-width:470px){
+  .clause{grid-template-columns:repeat(3,minmax(0,1fr)) 10px;gap:6px}
+  .slot{padding:5px}
+  .slot .lbl{font-size:10px}
+  .slot .card{font-size:13px;padding:7px 28px 7px 6px;min-height:46px}
+  .slot .card:not(.two){padding-right:6px}
+  .slot .flip{width:24px;height:24px;font-size:13px}
+  .punct{font-size:22px}
+}
+@media (max-width:700px){
+  .game{display:flex;flex-direction:column;height:auto}
+  .game > .col{overflow:visible}
+  .matcol{order:-1}
+}
+
+@media (max-width:860px){
+  .hero,.grid2{grid-template-columns:1fr}
+  .roles{grid-template-columns:1fr}
+  .teamgrid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:620px){
+  .clause{grid-template-columns:repeat(3,minmax(0,1fr)) 10px;gap:6px}
+  .slot{min-height:86px;padding:5px}
+  .slot .lbl{font-size:10px}
+  .card{font-size:14px;padding:8px 8px;min-height:48px}
+  .card.two{padding-right:32px}
+  .flip{width:28px;height:28px;font-size:15px}
+  .tray{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .punct{font-size:24px}
+  .lb li{grid-template-columns:34px 1fr auto auto;gap:6px}
+}
+.roompanel{display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.roomcode{font-family:var(--display);font-weight:800;font-size:clamp(56px,9vw,110px);letter-spacing:.14em;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.joinurl{font-size:13px;word-break:break-all}
+.qr{background:#fff;padding:10px;border-radius:12px;width:188px;height:188px;flex:none}
+.roomin{font-family:var(--display);font-size:30px;width:150px;letter-spacing:.25em;text-align:center}
+body{margin:0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.btn:hover{transform:none}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap" id="app"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* ================= DATA ================= */
+// Sentence Mat (same for every round & both types):
+// [1 Condition 🟡][2 Action 🩷T1/🟥T2][3 Environment 🟢] , [4 Result 🔵T1/🔷T2][5 Action 🩷 always][6 Environment 🟢] .
+const S = [
+  {id:'s1', c:'If we', a:['reduce','reduced'], e1:'plastic bags', r:['we will','we would'], b:['help','helped'], e2:'our world', link:'Plastic',
+   th:['ถ้าเราลดการใช้ถุงพลาสติก เราจะช่วยโลกของเรา','ถ้าเราลดการใช้ถุงพลาสติก (สมมติ) เราก็คงช่วยโลกของเราได้']},
+  {id:'s2', c:'If I', a:['find','found'], e1:'a plastic bottle on the beach', r:['I will','I would'], b:['take','took'], e2:'it to the recycling bin', link:'Ocean',
+   th:['ถ้าฉันเจอขวดพลาสติกบนชายหาด ฉันจะนำมันไปถังรีไซเคิล','ถ้าฉันเจอขวดพลาสติกบนชายหาด (สมมติ) ฉันก็คงนำมันไปถังรีไซเคิล']},
+  {id:'s3', c:'If we', a:['plant','planted'], e1:'more trees', r:['we will','we would'], b:['have','had'], e2:'cleaner air', link:'Forest',
+   th:['ถ้าเราปลูกต้นไม้เพิ่ม เราจะมีอากาศที่สะอาดขึ้น','ถ้าเราปลูกต้นไม้เพิ่ม (สมมติ) เราก็คงมีอากาศที่สะอาดขึ้น']},
+  {id:'s4', c:'If people', a:['turn off','turned off'], e1:'the lights', r:['they will','they would'], b:['save','saved'], e2:'energy', link:'Energy',
+   th:['ถ้าผู้คนปิดไฟ พวกเขาจะประหยัดพลังงาน','ถ้าผู้คนปิดไฟ (สมมติ) พวกเขาก็คงประหยัดพลังงานได้']},
+  {id:'s5', c:'If I', a:['use','used'], e1:'a reusable bottle', r:['I will','I would'], b:['be','were'], e2:'a green hero', link:'Hero',
+   th:['ถ้าฉันใช้ขวดน้ำแบบใช้ซ้ำได้ ฉันจะเป็นฮีโร่สีเขียว','ถ้าฉันใช้ขวดน้ำแบบใช้ซ้ำได้ (สมมติ) ฉันก็คงเป็นฮีโร่สีเขียว']},
+];
+const SLOTS = [
+  {k:'cond', name:'Condition', dots:['y'], hint:'If + subject'},
+  {k:'act',  name:'Action',    dots:['p','r'], hint:'T1 ชมพู / T2 แดง'},
+  {k:'env',  name:'Environment', dots:['g'], hint:''},
+  {k:'res',  name:'Result',    dots:['lb','db'], hint:'T1 ฟ้าอ่อน / T2 ฟ้าเข้ม'},
+  {k:'act',  name:'Action',    dots:['p'], hint:'ชมพูเสมอ (base)'},
+  {k:'env',  name:'Environment', dots:['g'], hint:''},
+];
+const TEAMS = ['Ocean','Forest','Solar','Coral','River','Leaf','Sky','Earth'];
+const BOTS = ['Bot Coral','Bot River','Bot Leaf'];
+
+function buildDeck(){
+  const d=[];
+  S.forEach(s=>{
+    d.push({id:s.id+'c', kind:'cond', faces:[{t:s.c,col:'y'}]});
+    d.push({id:s.id+'a', kind:'act',  faces:[{t:s.a[0],col:'p'},{t:s.a[1],col:'r'}]});
+    d.push({id:s.id+'e1',kind:'env',  faces:[{t:s.e1,col:'g'}]});
+    d.push({id:s.id+'r', kind:'res',  faces:[{t:s.r[0],col:'lb'},{t:s.r[1],col:'db'}]});
+    d.push({id:s.id+'b', kind:'act',  faces:[{t:s.b[0],col:'p'},{t:s.b[1],col:'r'}]});
+    d.push({id:s.id+'e2',kind:'env',  faces:[{t:s.e2,col:'g'}]});
+  });
+  return d;
+}
+const DECK = buildDeck();
+const CARD = Object.fromEntries(DECK.map(c=>[c.id,c]));
+const SBY = Object.fromEntries(S.map(s=>[s.id,s]));
+function expected(sid,type){
+  const s=SBY[sid], i=type-1;
+  return [{t:s.c,col:'y'},{t:s.a[i],col:type===1?'p':'r'},{t:s.e1,col:'g'},{t:s.r[i],col:type===1?'lb':'db'},{t:s.b[0],col:'p'},{t:s.e2,col:'g'}];
+}
+function sentenceText(sid,type){const e=expected(sid,type);return `${e[0].t} ${e[1].t} ${e[2].t}, ${e[3].t} ${e[4].t} ${e[5].t}.`;}
+function check(faces,sid,type){const e=expected(sid,type);return e.map((x,i)=>!!faces[i]&&faces[i].t===x.t&&faces[i].col===x.col);}
+
+/* ================= HELPERS ================= */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function hash(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}return h>>>0}
+function rng(seed){let a=seed;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function shuffle(arr,r=Math.random){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const fmt=ms=>(Math.max(0,ms)/1000).toFixed(1);
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+let toastT;function toast(m){let el=$('.toast');if(!el){el=document.createElement('div');el.className='toast';document.body.appendChild(el)}el.textContent=m;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,2600)}
+let actx;function beep(f=660,d=.12,type='sine',v=.15){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type=type;o.frequency.value=f;g.gain.value=v;o.connect(g);g.connect(actx.destination);const t=actx.currentTime;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d+.02)}catch(e){}}
+const fanfare=()=>{[523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.18,'triangle',.18),i*120))};
+function planRounds(n=3){ // 3 distinct sentences, both types guaranteed
+  const ids=shuffle(S.map(s=>s.id)).slice(0,n);
+  const types=shuffle([1,2,Math.random()<.5?1:2]).slice(0,n);
+  return ids.map((sid,i)=>({sid,type:types[i]}));
+}
+
+/* ================= SHARED RENDER PIECES ================= */
+function brand(){return `<div class="brand"><i><b style="background:var(--y)"></b><b style="background:var(--p)"></b><b style="background:var(--g)"></b><b style="background:var(--lb)"></b><b style="background:var(--db)"></b><b style="background:var(--r)"></b></i>Eco Hero Sentence Race</div>`}
+function typePill(t){return `<span class="pill ${t===1?'t1':'t2'}">${t===1?'Type 1 · First Conditional':'Type 2 · Second Conditional'}</span>`}
+function promptHTML(sid,type,mode){
+  if(mode==='thai') return `<div class="prompt th">${esc(SBY[sid].th[type-1])}</div><div>${typePill(type)}</div>`;
+  const e=expected(sid,type);
+  if(mode==='color') return `<div class="prompt">${e.map((x,i)=>`<w class="c-${x.col}">${esc(x.t)}</w>${i===2?',':''}`).join(' ')}.</div>`;
+  return `<div class="prompt">${esc(sentenceText(sid,type))}</div>`;
+}
+function answerStrip(sid,type){return `<div class="answer">${expected(sid,type).map((x,i)=>`<span class="card c-${x.col}">${esc(x.t)}</span>${i===2?'<span>,</span>':''}`).join('')}<span>.</span></div>`}
+function patternHTML(){return `<div class="pattern"><span>Type 1: <b style="background:var(--y)"></b><b style="background:var(--p)"></b><b style="background:var(--g)"></b> , <b style="background:var(--lb)"></b><b style="background:var(--p)"></b><b style="background:var(--g)"></b></span><span>Type 2: <b style="background:var(--y)"></b><b style="background:var(--r)"></b><b style="background:var(--g)"></b> , <b style="background:var(--db)"></b><b style="background:var(--p)"></b><b style="background:var(--g)"></b></span></div>`}
+
+/* ================= PLAY PAD (used by solo + group) ================= */
+function newPad(seedStr){
+  return {order:shuffle(DECK.map(c=>c.id),rng(hash(seedStr))), sides:{}, slots:[null,null,null,null,null,null], sel:null, filter:'all', locked:true, marks:null};
+}
+function face(pad,id){const c=CARD[id];return c.faces[(pad.sides[id]||0)%c.faces.length]}
+function cardHTML(pad,id,where){
+  const c=CARD[id], f=face(pad,id), two=c.faces.length>1, sel=pad.sel===id;
+  return `<div class="card c-${f.col} ${two?'two':''} ${sel?'sel':''} ${pad.justFlipped===id?'flipin':''}" role="button" tabindex="0" data-card="${id}" data-where="${where}" aria-label="${esc(f.t)}${two?' · แตะเพื่อพลิก':''}">${two?`<span class="side-tag">${(pad.sides[id]||0)?'BACK':'FRONT'}</span><span class="flip" aria-hidden="true">⟲</span>`:''}${esc(f.t)}</div>`;
+}
+function matHTML(pad){
+  const slot=i=>{const s=SLOTS[i], id=pad.slots[i], m=pad.marks?(pad.marks[i]?'ok':'bad'):'';
+    return `<div class="slot ${pad.sel&&!id?'armed':''} ${m}" role="button" tabindex="0" data-slot="${i}" aria-label="ช่อง ${i+1} ${s.name}">
+      <div class="lbl"><span>${i+1} · ${s.name}</span><span class="dots">${s.dots.map(d=>`<b style="background:var(--${d})"></b>`).join('')}</span></div>
+      ${id?cardHTML(pad,id,'slot'):`<span class="muted" style="font-size:12px;color:var(--mat-ink);opacity:.6">${esc(s.hint)}</span>`}
+    </div>`};
+  return `<div class="mat">
+    <div class="clause"><div class="clause-label">If-clause · เงื่อนไข</div>${slot(0)}${slot(1)}${slot(2)}<div class="punct">,</div></div>
+    <div class="clause"><div class="clause-label">Main clause · ผลลัพธ์</div>${slot(3)}${slot(4)}${slot(5)}<div class="punct">.</div></div>
+    ${patternHTML()}
+  </div>`;
+}
+const FILTERS=[['all','ทั้งหมด'],['cond','🟡 Condition'],['act','🩷🟥 Action'],['env','🟢 Environment'],['res','🔵🔷 Result']];
+function trayHTML(pad){
+  const used=new Set(pad.slots.filter(Boolean));
+  const ids=pad.order.filter(id=>!used.has(id)&&(pad.filter==='all'||CARD[id].kind===pad.filter));
+  return `<div class="trayhead"><h3>บัตรคำของกลุ่ม (${30-used.size} ใบ) <span class="howto">แตะการ์ด = พลิก · ลากไปวางบน Mat · ลากกลับมาที่นี่เพื่อเอาออก</span></h3><div class="chips">${FILTERS.map(([k,l])=>`<button class="chip ${pad.filter===k?'on':''}" data-filter="${k}">${l}</button>`).join('')}</div></div>
+  <div class="tray">${ids.map(id=>cardHTML(pad,id,'tray')).join('')}</div>`;
+}
+function padFaces(pad){return pad.slots.map(id=>id?face(pad,id):null)}
+// one delegated handler for any pad on screen
+function padClick(e,pad,rerender){
+  if(pad.locked) return false;
+  const fi=e.target.closest('[data-filter]');
+  if(fi){pad.filter=fi.dataset.filter;rerender();return true}
+  if(e.target.closest('[data-card],[data-slot]')) return true; // taps & drags handled by pointer events
+  return false;
+}
+function flipCard(pad,id){
+  if(CARD[id].faces.length<2){beep(200,.06,'sine',.05);return}
+  pad.sides[id]=(pad.sides[id]||0)?0:1;pad.justFlipped=id;beep(880,.05,'square',.06);
+  render();pad.justFlipped=null;
+}
+/* tap = flip, drag = move (mouse, pen and touch) */
+function activePad(){
+  if(app.view==='solo'&&solo&&solo.status==='play') return solo.pad;
+  if(app.view==='group'&&grp&&grp.pad&&grp.state&&grp.state.status==='play') return grp.pad;
+  return null;
+}
+let drag=null;
+function clearHover(){document.querySelectorAll('.slot.hover,.trayside.hover').forEach(n=>n.classList.remove('hover'))}
+function dropTarget(x,y){const el=document.elementFromPoint(x,y);if(!el)return null;return el.closest('[data-slot]')||el.closest('#trayzone')}
+document.addEventListener('pointerdown',e=>{
+  const cd=e.target.closest('[data-card]');if(!cd||e.button>0) return;
+  const pad=activePad();if(!pad||pad.locked) return;
+  drag={pad,id:cd.dataset.card,el:cd,x:e.clientX,y:e.clientY,moved:false,pid:e.pointerId,ghost:null};
+});
+document.addEventListener('pointermove',e=>{
+  if(!drag||e.pointerId!==drag.pid) return;
+  if(!drag.moved){
+    if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)<8) return;
+    drag.moved=true;
+    const r=drag.el.getBoundingClientRect(),g=drag.el.cloneNode(true);
+    g.classList.add('ghost');g.classList.remove('flipin');g.style.width=r.width+'px';
+    document.body.appendChild(g);drag.ghost=g;drag.el.classList.add('dragging');
+    try{drag.el.setPointerCapture(e.pointerId)}catch(_){}
+  }
+  e.preventDefault();
+  drag.ghost.style.left=e.clientX+'px';drag.ghost.style.top=e.clientY+'px';
+  clearHover();const t=dropTarget(e.clientX,e.clientY);if(t)t.classList.add('hover');
+},{passive:false});
+function endDrag(e,cancel){
+  if(!drag||e.pointerId!==drag.pid) return;
+  const d=drag;drag=null;
+  if(d.ghost)d.ghost.remove();clearHover();
+  if(!d.moved){if(!cancel)flipCard(d.pad,d.id);return}
+  if(cancel){d.el.classList.remove('dragging');return}
+  const pad=d.pad,t=dropTarget(e.clientX,e.clientY),from=pad.slots.indexOf(d.id);
+  if(t&&t.dataset.slot!==undefined){
+    const i=+t.dataset.slot,occ=pad.slots[i];
+    if(from>=0)pad.slots[from]=(occ&&occ!==d.id)?occ:null; // swap when moving between slots
+    pad.slots[i]=d.id;beep(700,.06,'triangle',.08);
+  }else if(t&&t.id==='trayzone'&&from>=0){pad.slots[from]=null;beep(400,.05,'sine',.06)}
+  render();
+}
+document.addEventListener('pointerup',e=>endDrag(e,false));
+document.addEventListener('pointercancel',e=>endDrag(e,true));
+function placeSel(pad,i){const id=pad.sel;const from=pad.slots.indexOf(id);if(from>=0)pad.slots[from]=null;pad.slots[i]=id;pad.sel=null;beep(700,.06,'triangle',.08)}
+
+/* ================= APP ================= */
+const app={view:'home'};
+let tick=null;
+function go(v){app.view=v;clearInterval(tick);tick=null;render()}
+let lastPad=null;
+function render(){
+  const root=$('#app');
+  const pad=app.view==='solo'?solo&&solo.pad:app.view==='group'?grp&&grp.pad:null;
+  const keep={};
+  if(pad&&pad===lastPad)['trayzone','rightzone'].forEach(id=>{const el=document.getElementById(id);if(el)keep[id]=el.scrollTop});
+  lastPad=pad;
+  draw(root);
+  root.classList.toggle('fit',!!root.querySelector('.game'));
+  Object.entries(keep).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.scrollTop=v});
+}
+function draw(root){
+  const tp=$('.traypanel'), keep=tp?tp.scrollTop:0;
+  if(app.view==='home') root.innerHTML=homeHTML();
+  else if(app.view==='solo') root.innerHTML=soloHTML();
+  else if(app.view==='teacher') root.innerHTML=teacherHTML();
+  else if(app.view==='group') root.innerHTML=groupHTML();
+  const tp2=$('.traypanel');if(tp2&&keep) tp2.scrollTop=keep;
+  countOverlay();
+}
+
+/* ---------- HOME ---------- */
+function homeHTML(){
+  const mini=(f)=>`<span class="mini">${f.map(x=>`<span class="c-${x.col}">${esc(x.t)}</span>`).join('')}</span>`;
+  return `
+  <div class="topbar">${brand()}<span class="muted">Level 1 · M.3 · First & Second Conditionals</span></div>
+  <section class="hero">
+    <div class="stack">
+      <span class="eyebrow">Sentence Mat Race</span>
+      <h1>เรียงบัตรคำให้ครบ 6 ช่อง แล้วกดส่งให้ไวที่สุด</h1>
+      <p class="muted">ครูสุ่มประโยคขึ้นจอ แต่ละกลุ่มหาบัตรคำ 6 ใบจาก 30 ใบ วางลง Sentence Mat และพลิกการ์ดให้ถูกด้าน (Type 1 ด้านหน้า / Type 2 ด้านหลัง) ระบบจับเวลาเป็นวินาทีและเรียงลำดับทุกกลุ่มขึ้นโปรเจกเตอร์ เล่น 3 รอบ ให้รางวัลทุกรอบ</p>
+    </div>
+    <div>${demoMat()}</div>
+  </section>
+  <div class="roles">
+    <button class="role" data-go="solo"><span class="tag">เริ่มที่นี่ · ทดลองเล่น</span><strong>🎮 ทดลองเล่นคนเดียว</strong><span class="muted">เล่นเป็น 1 กลุ่ม แข่งกับทีมจำลอง 3 ทีม ครบ 3 รอบ ไม่ต้องใช้เครื่องอื่น</span></button>
+    <button class="role" data-go="teacher"><span class="tag">ออนไลน์ · จอหน้าห้อง</span><strong>🖥️ ครู / โปรเจกเตอร์</strong><span class="muted">สุ่มประโยค เริ่มรอบ รับการส่งงานแบบเรียลไทม์ เรียงลำดับและเฉลย</span></button>
+    <button class="role" data-go="group"><span class="tag">ออนไลน์ · เครื่องของกลุ่ม</span><strong>👥 กลุ่มนักเรียน</strong><span class="muted">เลือกชื่อทีม เรียงบัตรคำลง Mat แล้วกดส่ง</span></button>
+  </div>
+  <section class="panel stack" style="margin-bottom:18px">
+    <h2>สีการ์ดและช่องบน Sentence Mat</h2>
+    <div class="legend">
+      <div class="lg"><span class="sw" style="background:var(--y)"></span>เหลือง = Condition (If I / If we)</div>
+      <div class="lg"><span class="sw" style="background:var(--p)"></span>ชมพู = Action ด้านหน้า (base: reduce, be)</div>
+      <div class="lg"><span class="sw" style="background:var(--r)"></span>แดงเข้ม = Action ด้านหลัง (past: reduced, were)</div>
+      <div class="lg"><span class="sw" style="background:var(--lb)"></span>ฟ้าอ่อน = Result ด้านหน้า (I will)</div>
+      <div class="lg"><span class="sw" style="background:var(--db)"></span>ฟ้าเข้ม = Result ด้านหลัง (I would)</div>
+      <div class="lg"><span class="sw" style="background:var(--g)"></span>เขียว = Environment</div>
+    </div>
+    <p class="muted">Mat มีหน้าตาเดียวกันทั้ง Type 1 และ Type 2 นักเรียนต้องเลือกเองว่าจะพลิกการ์ดด้านไหน ช่อง 5 (Action หลัง will/would) ต้องเป็นชมพูเสมอ ด้านหลังสีแดงของการ์ดใบนี้คือกับดัก ทีมตรวจกันเองได้จากแถบสี: Type 1 = 🟡🩷🟢 , 🔵🩷🟢 · Type 2 = 🟡🟥🟢 , 🔷🩷🟢</p>
+  </section>
+  <section class="panel stack rules" style="margin-bottom:18px">
+    <h2>ชุดบัตรคำ 5 ประโยค · 30 ใบต่อกลุ่ม</h2>
+    <p class="muted">การ์ดที่มีสองสีคือการ์ดหน้า-หลัง พิมพ์สีหนึ่งด้านหน้าและอีกสีด้านหลัง ประโยคเดียวกันจึงเล่นได้ทั้ง Type 1 และ Type 2 (10 แบบจากการ์ด 30 ใบ)</p>
+    <div class="tablewrap"><table class="set"><thead><tr><th>#</th><th>1 Condition</th><th>2 Action</th><th>3 Environment</th><th>4 Result</th><th>5 Action</th><th>6 Environment</th><th>ต่อยอดในบอร์ดเกม</th></tr></thead><tbody>
+    ${S.map((s,i)=>`<tr><td>${i+1}</td><td>${mini([{t:s.c,col:'y'}])}</td><td>${mini([{t:s.a[0],col:'p'},{t:s.a[1],col:'r'}])}</td><td>${mini([{t:s.e1,col:'g'}])}</td><td>${mini([{t:s.r[0],col:'lb'},{t:s.r[1],col:'db'}])}</td><td>${mini([{t:s.b[0],col:'p'},{t:s.b[1],col:'r'}])}</td><td>${mini([{t:s.e2,col:'g'}])}</td><td class="muted">${s.link}</td></tr>`).join('')}
+    </tbody></table></div>
+  </section>
+  <section class="panel rules">
+    <h2>กติกา</h2>
+    <ol>
+      <li>แบ่งกลุ่ม 5–6 คน แต่ละกลุ่มได้บัตรคำ 30 ใบ และ Sentence Mat 1 แผ่น (หรือเปิดหน้า "กลุ่มนักเรียน" บนแท็บเล็ต)</li>
+      <li>ครูสุ่มประโยคขึ้นจอ นับถอยหลัง 3-2-1 แล้วเริ่มจับเวลา</li>
+      <li>กลุ่มหาบัตรคำ 6 ใบ ลากวางตามช่อง แตะการ์ดเพื่อพลิกให้ถูกด้าน แล้วกดส่ง</li>
+      <li>จอหน้าห้องเรียงลำดับกลุ่มที่ส่งพร้อมเวลาเป็นวินาที</li>
+      <li>ครูกดเฉลย กลุ่มที่ถูกต้องและเร็วที่สุดได้รางวัลประจำรอบ เล่นจนครบ 3 รอบ</li>
+    </ol>
+  </section>`;
+}
+function demoMat(){
+  const pad=newPad('demo');pad.locked=true;pad.slots=['s1c','s1a','s1e1','s1r','s1b','s1e2'];pad.sides={s1a:1,s1r:1};
+  return matHTML(pad);
+}
+
+/* ---------- SOLO ---------- */
+let solo=null;
+function soloStart(){
+  solo={plan:planRounds(3),round:0,mode:lsGet('ehsr-mode','plain'),wins:{},results:[],status:'ready'};
+  go('solo');
+}
+function soloRound(){
+  const r=solo.plan[solo.round];
+  solo.pad=newPad('solo'+Date.now());
+  solo.status='count';solo.countTo=Date.now()+3000;
+  const base=Math.max(14000,34000-solo.round*5000);
+  solo.bots=BOTS.map(n=>({name:n,ms:base+Math.random()*26000,correct:Math.random()<.78,done:false}));
+  solo.player=null;solo.ticker='';
+  render();
+  clearInterval(tick);
+  tick=setInterval(soloTick,100);
+}
+function soloTick(){
+  const now=Date.now();
+  if(solo.status==='count'){
+    if(now>=solo.countTo){solo.status='play';solo.startAt=solo.countTo;solo.pad.locked=false;beep(980,.25,'square',.12);render()}
+    else countOverlay();
+    return;
+  }
+  if(solo.status!=='play') return;
+  const el=$('#timer');if(el) el.textContent=fmt(now-solo.startAt)+'s';
+  let changed=false;
+  solo.bots.forEach(b=>{if(!b.done&&now-solo.startAt>=b.ms){b.done=true;changed=true;solo.ticker=`${b.name} ส่งแล้ว · ${fmt(b.ms)} วินาที`;beep(330,.08,'sine',.08)}});
+  if(changed){const t=$('#ticker');if(t)t.textContent=solo.ticker;const l=$('#live');if(l)l.innerHTML=soloLive()}
+}
+function soloLive(){
+  const done=solo.bots.filter(b=>b.done).sort((a,b)=>a.ms-b.ms);
+  if(!done.length) return `<span class="muted" style="border:none;background:none;padding:0">จอหน้าห้อง: ยังไม่มีทีมส่ง</span>`;
+  return done.map((b,i)=>`<span>${i+1} · ${esc(b.name)} · ${fmt(b.ms)}s</span>`).join('');
+}
+function soloSubmit(giveup){
+  const r=solo.plan[solo.round];
+  const ms=Date.now()-solo.startAt;
+  const faces=padFaces(solo.pad);
+  const marks=check(faces,r.sid,r.type);
+  solo.pad.marks=marks;solo.pad.locked=true;solo.pad.sel=null;
+  solo.player={name:'ทีมของคุณ',ms,correct:!giveup&&marks.every(Boolean),me:true,giveup};
+  const all=[solo.player,...solo.bots].sort((a,b)=>a.ms-b.ms);
+  const win=all.find(x=>x.correct);
+  solo.ranking=all;solo.winner=win?win.name:null;
+  if(win) solo.wins[win.name]=(solo.wins[win.name]||0)+1;
+  solo.results.push({round:solo.round+1,sid:r.sid,type:r.type,winner:solo.winner});
+  solo.status='result';clearInterval(tick);
+  if(win&&win.me) fanfare(); else beep(220,.3,'sawtooth',.08);
+  render();
+}
+function soloHTML(){
+  const head=`<div class="topbar">${brand()}<div class="row"><button class="btn ghost" data-go="home">← หน้าแรก</button></div></div>`;
+  if(solo.status==='ready') return head+`<section class="panel stack" style="max-width:720px">
+    <span class="eyebrow">ทดลองเล่นคนเดียว</span><h2>คุณคือ 1 กลุ่ม แข่งกับทีมจำลอง 3 ทีม</h2>
+    <p class="muted">ทีมจำลองจะส่งงานในเวลาสุ่ม (ราว 15–60 วินาที) และผิดบ้างเป็นบางครั้ง เพื่อให้รู้สึกถึงแรงกดดันแบบในห้องเรียน 3 รอบ สุ่มประโยคไม่ซ้ำ มีทั้ง Type 1 และ Type 2</p>
+    <div class="row"><label for="pm">โจทย์บนกระดาน</label><select id="pm">${modeOpts(solo.mode)}</select></div>
+    <div><button class="btn primary big" data-act="solo-go">เริ่มรอบที่ 1</button></div></section>`;
+  if(solo.status==='end') return head+finalHTML(Object.entries(solo.wins).map(([n,w])=>({name:n,wins:w})),solo.results,'ทีมของคุณ')+`<div class="row" style="margin-top:16px"><button class="btn primary" data-act="solo-new">เล่นอีกครั้ง (สุ่มใหม่)</button><button class="btn" data-go="home">หน้าแรก</button></div>`;
+  const r=solo.plan[solo.round];
+  const board=`<div class="board ${solo.status==='result'?'':'compact'}"><div class="meta"><span class="eyebrow">รอบที่ ${solo.round+1} / 3</span>${solo.status==='result'?typePill(r.type):''}<span class="timer" id="timer">${solo.status==='result'?fmt(solo.player.ms)+'s':'0.0s'}</span></div>${promptHTML(r.sid,r.type,solo.mode)}</div>`;
+  if(solo.status==='result'){
+    const last=solo.round===2;
+    return head+board+`<div class="grid2"><div class="stack">${matHTML(solo.pad)}
+      <div class="panel stack"><h3>เฉลย</h3>${answerStrip(r.sid,r.type)}${tipFor(solo.pad.marks,r.type)}</div></div>
+      <div class="stack"><div class="panel stack"><h3>${solo.winner?`🏆 รางวัลรอบนี้: ${esc(solo.winner)}`:'ไม่มีทีมที่ถูกต้องในรอบนี้'}</h3>
+      <ul class="lb">${solo.ranking.map((x,i)=>`<li class="${x.name===solo.winner?'win':''} ${x.me?'me':''}"><span class="rk">${i+1}</span><span class="nm">${esc(x.name)}</span><span class="sec">${x.giveup?'—':fmt(x.ms)+'s'}</span><span class="mark ${x.correct?'ok':'bad'}">${x.correct?'✓':'✗'}</span></li>`).join('')}</ul></div>
+      ${scoreBar(solo.wins)}
+      <button class="btn primary big" data-act="solo-next">${last?'ดูผลรวม 3 รอบ':'รอบถัดไป →'}</button></div></div>`;
+  }
+  const cBoard=`<div class="board compact"><div class="meta"><span class="eyebrow">รอบที่ ${solo.round+1} / 3</span><span class="timer" id="timer">0.0s</span></div>${promptHTML(r.sid,r.type,solo.mode)}<div class="livechips" id="live">${soloLive()}</div></div>`;
+  const wins=Object.entries(solo.wins);
+  return head+`<div class="game">
+    <section class="col trayside" id="trayzone" aria-label="บัตรคำ">${trayHTML(solo.pad)}</section>
+    <section class="col matcol" id="rightzone">${cBoard}${matHTML(solo.pad)}
+      <div class="row"><button class="btn primary big" data-act="solo-submit" ${solo.pad.slots.every(Boolean)?'':'disabled'}>ส่งคำตอบ ✓</button><button class="btn ghost" data-act="solo-clear">เคลียร์ Mat</button><button class="btn ghost" data-act="solo-giveup">ยอมแพ้ ดูเฉลย</button></div>
+      ${wins.length?`<div class="scorebar">${wins.map(([n,c])=>`<span>🏆 ${esc(n)} × ${c}</span>`).join('')}</div>`:''}
+    </section></div>`;
+}
+function tipFor(marks,type){
+  if(!marks) return '';
+  if(marks.every(Boolean)) return `<p style="color:var(--ok);font-weight:700">ถูกต้องทั้ง 6 ช่อง</p>`;
+  const tips=[];
+  if(!marks[1]) tips.push(type===1?'ช่อง 2: Type 1 ใช้ Action ด้านหน้า (ชมพู · present simple)':'ช่อง 2: Type 2 ใช้ Action ด้านหลัง (แดง · past simple)');
+  if(!marks[3]) tips.push(type===1?'ช่อง 4: Type 1 ใช้ will (ฟ้าอ่อน)':'ช่อง 4: Type 2 ใช้ would (ฟ้าเข้ม)');
+  if(!marks[4]) tips.push('ช่อง 5: หลัง will/would ใช้ base form เสมอ (ชมพู)');
+  if(!marks[0]||!marks[2]||!marks[5]) tips.push('ตรวจการ์ดเหลือง/เขียวว่าเป็นของประโยคนี้และอยู่ถูกช่อง');
+  return `<ul style="margin:0;padding-left:20px">${tips.map(t=>`<li>${t}</li>`).join('')}</ul>`;
+}
+function scoreBar(w){const e=Object.entries(w||{});return `<div class="panel stack"><h3>รางวัลสะสม</h3>${e.length?`<div class="scorebar">${e.sort((a,b)=>b[1]-a[1]).map(([n,c])=>`<span>🏆 ${esc(n)} × ${c}</span>`).join('')}</div>`:'<p class="muted">ยังไม่มี</p>'}</div>`}
+function modeOpts(m){return [['plain','Level 1 · ประโยคเต็ม (ตัวดำ)'],['color','ง่ายสุด · ประโยคระบายสีตามการ์ด'],['thai','ท้าทาย · ความหมายภาษาไทย + บอก Type']].map(([k,l])=>`<option value="${k}" ${m===k?'selected':''}>${l}</option>`).join('')}
+function finalHTML(list,results,meName){
+  const ranked=list.sort((a,b)=>b.wins-a.wins);
+  const p=[ranked[1],ranked[0],ranked[2]];
+  return `<section class="panel stack"><span class="eyebrow">สรุปผล 3 รอบ</span><h2>${ranked[0]?`แชมป์: ${esc(ranked[0].name)}`:'ไม่มีทีมที่ได้รางวัล'}</h2>
+  <div class="podium">${p.map((x,i)=>`<div class="${['p2','p1','p3'][i]}">${x?`<span>${['🥈','🥇','🥉'][i]}</span><strong>${esc(x.name)}</strong><span>${x.wins} รางวัล</span>`:''}</div>`).join('')}</div>
+  <div class="stack">${results.map(r=>`<div class="row"><strong style="font-family:var(--display)">รอบ ${r.round}</strong>${typePill(r.type)}<span>${esc(sentenceText(r.sid,r.type))}</span><span class="muted">→ ${r.winner?esc(r.winner):'ไม่มีผู้ชนะ'}</span></div>`).join('')}</div></section>`;
+}
+
+/* ---------- COUNTDOWN OVERLAY ---------- */
+function countOverlay(){
+  let target=null;
+  if(app.view==='solo'&&solo&&solo.status==='count') target=solo.countTo;
+  if(app.view==='group'&&grp&&grp.countTo&&Date.now()<grp.countTo) target=grp.countTo;
+  if(app.view==='teacher'&&T.state&&T.state.status==='play'&&Date.now()<T.localStart+3000) target=T.localStart+3000;
+  let el=$('.count');
+  if(!target){if(el)el.remove();return}
+  if(!el){el=document.createElement('div');el.className='count';document.body.appendChild(el)}
+  const n=Math.ceil((target-Date.now())/1000);
+  if(el.textContent!==String(n)){el.textContent=n;beep(440,.12,'square',.08)}
+}
+
+/* ================= ONLINE (Supabase) ================= */
+const SB_URL='https://psavxtiogcjgbiawrfbg.supabase.co', SB_KEY='__SB_KEY__';
+let sb=null;
+try{ if(window.supabase) sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false}}) }catch(e){ sb=null }
+const db=sb, dbReady=true;
+const params=new URLSearchParams(location.search);
+function joinURL(code){return location.origin+location.pathname+'?room='+code}
+function offline(){return `<section class="panel stack" style="max-width:720px"><h2>เชื่อมต่อเซิร์ฟเวอร์เกมไม่ได้</h2><p class="muted">ตรวจอินเทอร์เน็ตแล้วรีเฟรชหน้า ระหว่างนี้ลองโหมด "ทดลองเล่นคนเดียว" ได้</p><div><button class="btn primary" data-act="solo-start">ทดลองเล่นคนเดียว</button></div></section>`}
+const blankState=()=>({status:'idle',round:0,total:3,used:[],mode:lsGet('ehsr-mode','plain'),key:'',sid:'',type:1,startAt:0,results:[],scores:{},history:[]});
+const isoMs=iso=>Date.parse(iso);
+
+/* ----- teacher ----- */
+const T={room:null,token:null,state:null,subs:[],groups:[],bots:[],useBots:lsGet('ehsr-bots',false),chan:null,localStart:0,busy:false};
+function randToken(){const a=new Uint8Array(18);crypto.getRandomValues(a);return Array.from(a,b=>b.toString(16).padStart(2,'0')).join('')}
+async function tInit(){
+  if(T.room||T.busy) return; T.busy=true;
+  try{
+    const saved=lsGet('ehsr-teacher',null);
+    if(saved&&saved.code&&saved.token){
+      const {data,error}=await sb.rpc('ehsr_check_token',{p_code:saved.code,p_token:saved.token});
+      if(!error&&data){T.room=saved.code;T.token=saved.token}
+    }
+    if(!T.room) await tNewRoom(true);
+    await tLoad(); tListen();
+  }catch(e){toast('เชื่อมต่อไม่สำเร็จ: '+(e.message||e))}
+  T.busy=false; render();
+}
+async function tNewRoom(silent){
+  const token=randToken();
+  const {data,error}=await sb.rpc('ehsr_create_room',{p_token:token});
+  if(error) throw error;
+  T.room=data;T.token=token;T.state=null;T.subs=[];T.groups=[];T.bots=[];
+  lsSet('ehsr-teacher',{code:T.room,token});
+  if(!silent){await tLoad();tListen();render();toast('สร้างห้องใหม่แล้ว: '+T.room)}
+}
+async function tLoad(){
+  const [r,s,g]=await Promise.all([
+    sb.from('ehsr_rooms').select('state').eq('code',T.room).single(),
+    sb.from('ehsr_subs').select('*').eq('room',T.room),
+    sb.from('ehsr_groups').select('*').eq('room',T.room)]);
+  T.state={...blankState(),...(r.data?r.data.state:{})};
+  if(T.state.status==='play') T.localStart=Date.now()-3000;
+  T.subs=s.data||[]; T.groups=(g.data||[]).sort((a,b)=>a.gid.localeCompare(b.gid));
+}
+function tListen(){
+  if(T.chan) sb.removeChannel(T.chan);
+  T.chan=sb.channel('t-'+T.room)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'ehsr_subs',filter:'room=eq.'+T.room},p=>addSub(p.new))
+    .on('postgres_changes',{event:'*',schema:'public',table:'ehsr_groups',filter:'room=eq.'+T.room},()=>refreshGroups())
+    .subscribe();
+}
+function addSub(row){
+  if(T.subs.find(x=>x.id===row.id)) return false;
+  T.subs.push(row);
+  if(T.state&&row.round_key===T.state.key&&T.state.status==='play') beep(600,.1,'triangle',.12);
+  updateTeacherLive(); return true;
+}
+async function refreshGroups(){
+  const {data}=await sb.from('ehsr_groups').select('*').eq('room',T.room);
+  T.groups=(data||[]).sort((a,b)=>a.gid.localeCompare(b.gid));
+  const el=$('#teams');if(el)el.innerHTML=teamsHTML();
+}
+// safety net in case the realtime connection drops
+setInterval(async()=>{
+  if(app.view!=='teacher'||!sb||!T.room||!T.state) return;
+  if(T.state.status==='play'){
+    const {data}=await sb.from('ehsr_subs').select('*').eq('room',T.room).eq('round_key',T.state.key);
+    (data||[]).forEach(addSub);
+  }
+  if(T.state.status==='idle') refreshGroups();
+},3000);
+function teamsHTML(){return T.groups.length?T.groups.map(g=>`<span>${esc(g.name)}</span>`).join(''):'<span class="muted">ยังไม่มีกลุ่มเข้าร่วม · ให้แต่ละกลุ่มสแกน QR หรือใส่รหัสห้อง</span>'}
+function currentRows(){
+  const st=T.state; if(!st||!st.key) return [];
+  const start=(st.serverStart||0)+3000;
+  const rows=T.subs.filter(s=>s.round_key===st.key).map(s=>({gid:s.gid,name:s.name,
+    ms:st.serverStart?isoMs(s.created_at)-start:(s.client_ms||0),
+    correct:check(s.faces||[],st.sid,st.type).every(Boolean)}));
+  if(T.useBots){const el=Date.now()-T.localStart-3000;T.bots.forEach(b=>{if(st.status!=='play'||el>=b.ms) rows.push({gid:b.name,name:b.name,ms:b.ms,correct:b.correct,bot:true})})}
+  return rows.sort((a,b)=>a.ms-b.ms);
+}
+function liveList(rows,reveal,winner){
+  if(!rows.length) return `<li><span class="rk">–</span><span class="nm muted">รอกลุ่มแรกส่ง…</span><span></span><span></span></li>`;
+  return rows.map((x,i)=>`<li class="${reveal&&x.name===winner?'win':''}"><span class="rk">${i+1}</span><span class="nm">${esc(x.name)}</span><span class="sec">${fmt(x.ms)}s</span>${reveal?`<span class="mark ${x.correct?'ok':'bad'}">${x.correct?'✓':'✗'}</span>`:'<span class="mark wait">ส่งแล้ว</span>'}</li>`).join('');
+}
+function updateTeacherLive(){
+  const st=T.state;if(!st) return;
+  if(st.status==='play'){const el=$('#live');if(el)el.innerHTML=liveList(currentRows(),false)}
+}
+function teacherTick(){
+  const st=T.state;if(!st||st.status!=='play') return;
+  countOverlay();
+  const el=$('#timer');if(el) el.textContent=fmt(Date.now()-T.localStart-3000)+'s';
+  if(T.useBots){const n=T.bots.filter(b=>Date.now()-T.localStart-3000>=b.ms).length;if(n!==T._botN){T._botN=n;updateTeacherLive()}}
+}
+async function tWrite(next){
+  const {data,error}=await sb.rpc('ehsr_set_state',{p_code:T.room,p_token:T.token,p_state:next});
+  if(error){toast('บันทึกไม่สำเร็จ: '+error.message);return false}
+  T.state={...blankState(),...data};render();return true;
+}
+async function tStart(pick){
+  const st={...(T.state||blankState())};
+  if(st.round>=st.total) return;
+  let sid,type;
+  if(pick){[sid,type]=pick.split(':');type=+type}
+  else{
+    const left=S.map(s=>s.id).filter(id=>!st.used.includes(id));
+    sid=shuffle(left)[0];
+    const types=(st.history||[]).map(h=>h.type);
+    type=(st.round===st.total-1&&types.length&&types.every(t=>t===types[0]))?(types[0]===1?2:1):(Math.random()<.5?1:2);
+  }
+  T._botN=0;
+  const base=Math.max(14000,34000-st.round*5000);
+  T.bots=BOTS.map(n=>({name:n,ms:base+Math.random()*26000,correct:Math.random()<.78}));
+  T.localStart=Date.now();
+  const ok=await tWrite({...st,status:'play',round:st.round+1,sid,type,used:[...st.used,sid],key:'k'+Date.now().toString(36),startAt:Date.now(),results:[],winner:'',mode:$('#pm')?$('#pm').value:st.mode});
+  if(ok) T.localStart=Date.now();
+}
+async function tReveal(){
+  // pick up any last-second submissions before ranking
+  const {data}=await sb.from('ehsr_subs').select('*').eq('room',T.room).eq('round_key',T.state.key);
+  (data||[]).forEach(r=>{if(!T.subs.find(x=>x.id===r.id))T.subs.push(r)});
+  const st={...T.state};const rows=currentRows();
+  const win=rows.find(r=>r.correct);
+  const scores={...(st.scores||{})};
+  if(win){scores[win.name]=(scores[win.name]||0)+1}
+  fanfare();
+  await tWrite({...st,status:'reveal',results:rows.map(r=>({gid:r.gid,name:r.name,ms:Math.round(r.ms),correct:r.correct})),winner:win?win.name:'',scores,history:[...(st.history||[]),{round:st.round,sid:st.sid,type:st.type,winner:win?win.name:''}]});
+}
+async function tEnd(){await tWrite({...T.state,status:'end'})}
+async function tReset(){
+  if(!T.confirmReset){T.confirmReset=true;render();return}
+  T.confirmReset=false;
+  const {error}=await sb.rpc('ehsr_reset',{p_code:T.room,p_token:T.token});
+  if(error){toast('ล้างข้อมูลไม่สำเร็จ: '+error.message);return}
+  T.subs=[];T.groups=[];T.bots=[];
+  await tWrite({...blankState(),mode:$('#pm')?$('#pm').value:'plain'});
+  toast('เริ่มเกมใหม่แล้ว (ห้องเดิม '+T.room+')');
+}
+function drawQR(){
+  const el=$('#qr');if(!el||!window.QRCode||el.dataset.done===T.room) return;
+  el.innerHTML='';el.dataset.done=T.room;
+  new QRCode(el,{text:joinURL(T.room),width:168,height:168,correctLevel:QRCode.CorrectLevel.M});
+}
+function teacherHTML(){
+  const head=`<div class="topbar">${brand()}<div class="row">${T.room?`<span class="pill" style="color:var(--accent)">ห้อง ${T.room}</span>`:''}<button class="btn ghost" data-go="home">← หน้าแรก</button></div></div>`;
+  if(!sb) return head+offline();
+  if(!T.room||!T.state){tInit();return head+`<p class="muted">กำลังเตรียมห้องเกม…</p>`}
+  const st=T.state;
+  if(!tick) tick=setInterval(teacherTick,100);
+  setTimeout(drawQR,0);
+  const roomPanel=`<div class="panel roompanel"><div class="stack" style="gap:6px;min-width:0"><span class="eyebrow">รหัสห้อง · ให้แต่ละกลุ่มสแกน QR หรือพิมพ์รหัส</span><div class="roomcode">${T.room}</div><p class="muted joinurl">${esc(joinURL(T.room))}</p></div><div id="qr" class="qr" aria-label="QR code สำหรับเข้าห้อง"></div></div>`;
+  const controls=`<div class="panel stack"><div class="row" style="justify-content:space-between"><h3>แผงครู</h3><span class="muted">รอบ ${st.round} / ${st.total}</span></div>
+    <div class="row"><label for="pm">โจทย์บนจอ</label><select id="pm">${modeOpts(st.mode)}</select></div>
+    <label class="tg"><input type="checkbox" id="botsT" ${T.useBots?'checked':''}> เพิ่มทีมจำลอง 3 ทีม (ไว้ทดสอบ · ปิดเมื่อสอนจริง)</label>
+    ${st.status==='idle'||st.status==='reveal'?(st.round<st.total?`<div class="row"><button class="btn primary big" data-act="t-start">🎲 สุ่มประโยค · เริ่มรอบ ${st.round+1}</button></div>
+      <div class="row"><select id="pick"><option value="">หรือเลือกประโยคเอง…</option>${S.filter(s=>!st.used.includes(s.id)).flatMap(s=>[1,2].map(t=>`<option value="${s.id}:${t}">T${t} · ${esc(sentenceText(s.id,t))}</option>`)).join('')}</select><button class="btn" data-act="t-pick">เริ่มด้วยประโยคนี้</button></div>`
+      :`<button class="btn primary big" data-act="t-end">🏆 ดูสรุปผล 3 รอบ</button>`):''}
+    ${st.status==='play'?`<button class="btn primary big" data-act="t-reveal">⏹ หยุดเวลา · เฉลย</button>`:''}
+    <div class="row"><button class="btn ghost" data-act="t-reset">${T.confirmReset?'กดอีกครั้งเพื่อยืนยัน: ล้างคะแนนทั้งหมด':'↺ เริ่มเกมใหม่ (ห้องเดิม)'}</button>${T.confirmReset?'<button class="btn ghost" data-act="t-cancel">ยกเลิก</button>':''}<button class="btn ghost" data-act="t-newroom">＋ สร้างห้องใหม่ (คาบใหม่)</button></div>
+    <div><h3 style="margin-bottom:6px">กลุ่มที่เข้าร่วม (${T.groups.length})</h3><div class="teams" id="teams">${teamsHTML()}</div></div></div>`;
+  if(st.status==='end'){
+    return head+finalHTML(Object.entries(st.scores||{}).map(([n,w])=>({name:n,wins:w})),st.history||[])+`<div style="margin-top:16px">${controls}</div>`;
+  }
+  if(st.status==='idle'){
+    return head+`<div class="grid2"><div class="stack">${roomPanel}<div class="board"><span class="eyebrow">พร้อมเริ่ม</span><h2>Eco Hero Sentence Race</h2><p class="muted">เมื่อทุกกลุ่มเข้าห้องครบ ครูกดสุ่มประโยคเพื่อเริ่มรอบที่ 1</p></div></div>${controls}</div>`;
+  }
+  const reveal=st.status==='reveal';
+  const rows=reveal?st.results:currentRows();
+  return head+`<div class="board"><div class="meta"><span class="eyebrow">รอบที่ ${st.round} / ${st.total} · ห้อง ${T.room}</span>${reveal||st.mode==='thai'?typePill(st.type):''}<span class="timer" id="timer">${reveal?'⏹':'0.0s'}</span></div>${promptHTML(st.sid,st.type,st.mode)}${reveal?answerStrip(st.sid,st.type):''}</div>
+  <div class="grid2"><div class="panel stack"><h2>${reveal?(st.winner?`🏆 รางวัลรอบนี้: ${esc(st.winner)}`:'ไม่มีกลุ่มที่ถูกต้องในรอบนี้'):'ลำดับการส่ง'}</h2><ul class="lb" id="live">${liveList(rows,reveal,st.winner)}</ul>${scoreBar(st.scores)}</div>${controls}</div>`;
+}
+
+/* ----- group ----- */
+let grp=null;
+function gApply(st){
+  const raw=JSON.stringify(st); if(grp.raw===raw) return; grp.raw=raw;
+  const prev=grp.state;grp.state=st;
+  if(st.status==='play'&&st.key!==grp.key){
+    grp.key=st.key;grp.pad=newPad(st.key);grp.pad.locked=true;grp.countTo=Date.now()+3000;grp.submitted=null;
+    clearInterval(tick);tick=setInterval(groupTick,100);
+  }
+  if(st.status==='idle'&&prev&&prev.status!=='idle'){grp.key='';grp.pad=null;grp.submitted=null}
+  if(st.status==='reveal'&&prev&&prev.status!=='reveal'){const me=(st.results||[]).find(r=>r.gid===grp.gid);if(st.winner&&st.winner===grp.name)fanfare();else if(me)beep(300,.2,'triangle',.1)}
+  if(app.view==='group') render();
+}
+async function gPoll(){
+  if(!grp) return;
+  const {data}=await sb.from('ehsr_rooms').select('state').eq('code',grp.room).maybeSingle();
+  if(data) gApply({...blankState(),...data.state});
+}
+function gListen(){
+  if(grp.chan) sb.removeChannel(grp.chan);
+  grp.chan=sb.channel('g-'+grp.room+'-'+grp.gid)
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'ehsr_rooms',filter:'code=eq.'+grp.room},p=>gApply({...blankState(),...p.new.state}))
+    .subscribe();
+  clearInterval(grp.poll);grp.poll=setInterval(gPoll,3000); // safety net
+}
+function groupTick(){
+  if(!grp||!grp.pad) return;
+  if(grp.countTo){
+    if(Date.now()>=grp.countTo){grp.countTo=0;grp.padStart=performance.now();grp.pad.locked=!!grp.submitted;beep(980,.25,'square',.12);render()}
+    else countOverlay();
+    return;
+  }
+  const el=$('#timer');if(el&&!grp.submitted&&grp.state.status==='play') el.textContent=fmt(performance.now()-grp.padStart)+'s';
+}
+async function gJoin(n){
+  const inp=$('#roomIn'); const code=(inp?inp.value:'').trim();
+  if(!/^\d{4}$/.test(code)){toast('ใส่รหัสห้อง 4 หลักก่อน');if(inp)inp.focus();return}
+  const {data,error}=await sb.from('ehsr_rooms').select('state').eq('code',code).maybeSingle();
+  if(error||!data){toast('ไม่พบห้อง '+code+' · ตรวจรหัสบนจอครูอีกครั้ง');return}
+  const name='ทีม '+TEAMS[n-1];
+  const ins=await sb.from('ehsr_groups').upsert({room:code,gid:'g'+n,name},{onConflict:'room,gid',ignoreDuplicates:true});
+  if(ins.error){toast('เข้าร่วมไม่สำเร็จ: '+ins.error.message);return}
+  lsSet('ehsr-team',n);lsSet('ehsr-room',code);
+  if(grp){clearInterval(grp.poll);if(grp.chan)sb.removeChannel(grp.chan)}
+  grp={room:code,gid:'g'+n,n,name,state:null,key:'',pad:null,raw:''};
+  gApply({...blankState(),...data.state});
+  gListen();render();
+}
+async function gSubmit(){
+  const st=grp.state, pad=grp.pad;
+  const faces=padFaces(pad);
+  const clientMs=Math.round(performance.now()-grp.padStart);
+  pad.locked=true;pad.sel=null;grp.submitted={clientMs};
+  beep(760,.15,'triangle',.14);render();
+  const {error}=await sb.from('ehsr_subs').insert({room:grp.room,round_key:st.key,gid:grp.gid,name:grp.name,faces,client_ms:clientMs});
+  if(error&&error.code!=='23505'){
+    if(error.code==='42501'){toast('ครูปิดรอบนี้แล้ว ส่งไม่ทัน');return}
+    grp.submitted=null;pad.locked=false;toast('ส่งไม่สำเร็จ ลองกดอีกครั้ง');render();
+  }
+}
+function groupHTML(){
+  const head=`<div class="topbar">${brand()}<div class="row">${grp?`<span class="pill" style="color:var(--accent)">${esc(grp.name)} · ห้อง ${grp.room}</span>`:''}<button class="btn ghost" data-go="home">← หน้าแรก</button></div></div>`;
+  if(!sb) return head+offline();
+  if(!grp){
+    const code=params.get('room')||lsGet('ehsr-room','');const last=lsGet('ehsr-team',0);
+    return head+`<section class="panel stack"><span class="eyebrow">กลุ่มนักเรียน</span><h2>1) ใส่รหัสห้องจากจอครู &nbsp;2) แตะชื่อทีม</h2>
+      <div class="row"><label for="roomIn" style="font-family:var(--display);font-size:18px">รหัสห้อง</label><input type="text" id="roomIn" inputmode="numeric" autocomplete="off" maxlength="4" value="${esc(code)}" class="roomin"></div>
+      <div class="teamgrid">${TEAMS.map((t,i)=>`<button class="btn ${last===i+1?'primary':''}" data-join="${i+1}">ทีม ${t}</button>`).join('')}</div></section>`;
+  }
+  const st=grp.state;
+  if(!st) return head+`<p class="muted">กำลังเชื่อมต่อ…</p>`;
+  if(st.status==='end'){return head+finalHTML(Object.entries(st.scores||{}).map(([n,w])=>({name:n,wins:w})),st.history||[])}
+  if(!grp.pad||st.status==='idle') return head+`<section class="board" style="text-align:center"><span class="eyebrow">${esc(grp.name)} · ห้อง ${grp.room}</span><h1>เข้าห้องแล้ว · รอครูเริ่มรอบ…</h1><p class="muted">ดูโจทย์บนจอหน้าห้อง เมื่อครูกดเริ่ม บัตรคำ 30 ใบจะปรากฏที่นี่</p></section>`;
+  if(st.status==='reveal'&&st.key===grp.key){
+    const res=st.results||[];const i=res.findIndex(r=>r.gid===grp.gid);const me=res[i];
+    grp.pad.marks=grp.submitted?check(padFaces(grp.pad),st.sid,st.type):null;grp.pad.locked=true;
+    return head+`<div class="board"><div class="meta"><span class="eyebrow">รอบที่ ${st.round} · เฉลย</span>${typePill(st.type)}</div>
+      <h2>${st.winner===grp.name?'🏆 กลุ่มเราได้รางวัลรอบนี้!':me?`ลำดับที่ ${i+1} · ${fmt(me.ms)} วินาที · ${me.correct?'ถูกต้อง ✓':'ยังไม่ถูก ✗'}`:'กลุ่มเราไม่ได้ส่งในรอบนี้'}</h2>${answerStrip(st.sid,st.type)}</div>
+      <div class="grid2"><div class="stack">${matHTML(grp.pad)}${tipFor(grp.pad.marks,st.type)}</div><div class="panel stack"><h3>ลำดับรอบนี้</h3><ul class="lb">${res.map((x,k)=>`<li class="${x.name===st.winner?'win':''} ${x.gid===grp.gid?'me':''}"><span class="rk">${k+1}</span><span class="nm">${esc(x.name)}</span><span class="sec">${fmt(x.ms)}s</span><span class="mark ${x.correct?'ok':'bad'}">${x.correct?'✓':'✗'}</span></li>`).join('')}</ul></div></div>`;
+  }
+  const sent=!!grp.submitted;
+  return head+`<div class="game">
+    <section class="col trayside" id="trayzone" aria-label="บัตรคำ">${sent?`<div class="sentmsg"><h2 style="color:var(--ok)">ส่งแล้ว! รอครูเฉลย…</h2><p class="muted">ดูลำดับการส่งบนจอหน้าห้อง</p></div>`:trayHTML(grp.pad)}</section>
+    <section class="col matcol" id="rightzone"><div class="board compact"><div class="meta"><span class="eyebrow">รอบที่ ${st.round} / ${st.total} · ดูประโยคบนจอหน้าห้อง</span><span class="timer" id="timer">${sent?fmt(grp.submitted.clientMs)+'s':'0.0s'}</span></div></div>
+    ${matHTML(grp.pad)}
+    <div class="row"><button class="btn primary big" data-act="g-submit" ${!sent&&!grp.pad.locked&&grp.pad.slots.every(Boolean)?'':'disabled'}>ส่งคำตอบ ✓</button>${sent?'':'<button class="btn ghost" data-act="g-clear">เคลียร์ Mat</button>'}</div>
+    </section></div>`;
+}
+
+/* ================= EVENTS ================= */
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');
+  if(g){const v=g.dataset.go;if(v==='solo'){soloStart();return}go(v);return}
+  const j=e.target.closest('[data-join]');if(j){gJoin(+j.dataset.join);return}
+  if(app.view==='solo'&&solo&&solo.pad&&solo.status==='play'){if(padClick(e,solo.pad,()=>{render()}))return}
+  if(app.view==='group'&&grp&&grp.pad){if(padClick(e,grp.pad,()=>render()))return}
+  const a=e.target.closest('[data-act]');if(!a) return;
+  const act=a.dataset.act;
+  if(act==='solo-start') soloStart();
+  if(act==='solo-go'){solo.mode=$('#pm').value;lsSet('ehsr-mode',solo.mode);soloRound()}
+  if(act==='solo-submit') soloSubmit(false);
+  if(act==='solo-giveup') soloSubmit(true);
+  if(act==='solo-clear'){solo.pad.slots=[null,null,null,null,null,null];solo.pad.sel=null;render()}
+  if(act==='solo-next'){if(solo.round>=2){solo.status='end';render()}else{solo.round++;soloRound()}}
+  if(act==='solo-new') soloStart();
+  if(act==='t-start') tStart();
+  if(act==='t-pick'){const v=$('#pick').value;if(!v){toast('เลือกประโยคก่อน');return}tStart(v)}
+  if(act==='t-reveal') tReveal();
+  if(act==='t-end') tEnd();
+  if(act==='t-reset') tReset();
+  if(act==='t-newroom') tNewRoom(false).catch(err=>toast('สร้างห้องไม่สำเร็จ: '+(err.message||err)));
+  if(act==='t-cancel'){T.confirmReset=false;render()}
+  if(act==='g-submit') gSubmit();
+  if(act==='g-clear'){grp.pad.slots=[null,null,null,null,null,null];grp.pad.sel=null;render()}
+});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-card]')){e.preventDefault();const p=activePad();if(p&&!p.locked)flipCard(p,e.target.dataset.card)}});
+document.addEventListener('change',e=>{
+  if(e.target.id==='botsT'){T.useBots=e.target.checked;lsSet('ehsr-bots',T.useBots);updateTeacherLive()}
+  if(e.target.id==='pm'){lsSet('ehsr-mode',e.target.value);if(app.view==='teacher'&&T.state&&T.state.status!=='play'){tWrite({...T.state,mode:e.target.value})}else if(app.view==='teacher'&&T.state){tWrite({...T.state,mode:e.target.value})}}
+});
+render();
+</script>
+</body>
+</html>
