@@ -234,6 +234,40 @@ input[type=number],input[type=text],textarea,select{font-family:inherit;font-siz
 .e.dots{height:.6cqw;background:repeating-linear-gradient(90deg,#fff 0 .6cqw,transparent .6cqw 1.6cqw);border-radius:1cqw;filter:drop-shadow(0 0 .5cqw #9ff);animation:dots 1s linear infinite;opacity:.9}
 @keyframes dots{from{background-position:0 0}to{background-position:-1.6cqw 0}}
 body.noanim .lays,body.noanim .lfx,body.noanim .fx{display:none}
+/* ===== HTML-built slides (Main clause first) ===== */
+.stat{position:absolute;inset:0;pointer-events:none;color:#24473a}
+.sl-title{position:absolute;left:13%;right:13%;top:4.6%;text-align:center;font-family:'Kanit';font-weight:600;font-size:3cqw;color:#24473a;animation:ldrop .8s cubic-bezier(.2,1.2,.4,1) both}
+.sl-sub{position:absolute;left:10%;right:10%;top:13.6%;text-align:center;font-family:'Sarabun';font-weight:600;font-size:2cqw;color:#55665b;animation:lin .7s .3s both}
+.hrow{position:absolute;left:8%;right:8%;display:flex;align-items:center;justify-content:center;gap:.9cqw;flex-wrap:nowrap}
+.stat .hrow{animation:lrise .7s cubic-bezier(.2,1.2,.4,1) both}
+.rl{font-family:'Kanit';font-weight:500;font-size:1.55cqw;color:#fff;background:#2f7d4f;border-radius:1cqw;padding:.35cqw 1cqw;white-space:nowrap;flex:0 0 auto}
+.rl.p{background:#7b4bb5}
+.ck{border-radius:1.2cqw;padding:.8cqw 1.3cqw;font-family:'Nunito';font-weight:800;font-size:2.45cqw;box-shadow:0 .35cqw .9cqw rgba(0,0,0,.12);white-space:nowrap}
+.ck small{display:block;font-family:'Kanit';font-weight:500;font-size:1.15cqw;opacity:.8;margin-bottom:.1cqw}
+.ck.bl{background:#dcecf9;border:.25cqw solid #6f9fcf;color:#1f4e80}
+.ck.or{background:#fde3c8;border:.25cqw solid #e9a35d;color:#8a4a12}
+.cm{font-family:'Nunito';font-weight:900;font-size:3.2cqw;background:#ffe45c;border-radius:.6cqw;padding:0 .45cqw;color:#333;line-height:1.1}
+.nc{font-family:'Nunito';font-weight:900;font-size:2.4cqw;color:#d64545;opacity:0;transform:scale(2);transition:.5s cubic-bezier(.3,1.6,.5,1);white-space:nowrap}
+.ovl.st2 .nc,.ovl.st3 .nc{opacity:1;transform:none}
+.b-h{opacity:0}
+.b-h>span{display:flex;align-items:center;justify-content:center;gap:.9cqw;width:100%;height:100%}
+.b-h.in{opacity:1}
+.b-h.in .flo{animation:flipO 1s cubic-bezier(.3,1.2,.5,1) both}
+.b-h.in .flb{animation:flipB 1s cubic-bezier(.3,1.2,.5,1) both}
+.b-h.in .pp{animation:lin .7s cubic-bezier(.2,1.3,.4,1) both}
+@keyframes flipO{0%{opacity:0;transform:translate(34cqw,-20cqh) rotate(6deg)}100%{opacity:1;transform:none}}
+@keyframes flipB{0%{opacity:0;transform:translate(-34cqw,-20cqh) rotate(-6deg)}100%{opacity:1;transform:none}}
+.note2{display:inline-flex;align-items:center;gap:1cqw;background:#fff0f0;border:.25cqw dashed #e07a7a;color:#a32a2a;border-radius:1.2cqw;padding:.6cqw 1.6cqw;font-family:'Kanit';font-size:1.9cqw}
+.note2 b{font-family:'Nunito';font-weight:900;color:#2f7d4f}
+.fbox{background:#eef7ef;border:.3cqw solid #8fc19d;border-radius:1.6cqw;padding:1cqw 2cqw;font-family:'Nunito';font-weight:800;font-size:2.35cqw;text-align:center;box-shadow:0 .4cqw 1cqw rgba(0,0,0,.08);color:#2b3b33;line-height:1.5}
+.fbox.p{background:#f3ecfb;border-color:#b79ad8}
+.fbox .ss{color:#2f6fb3}.fbox .mm{color:#7b4bb5}.fbox .vv{color:#b03a2e}.fbox .ii{background:#ffe45c;border-radius:.4cqw;padding:0 .35cqw}
+.fbox small{display:block;font-family:'Kanit';font-weight:500;font-size:1.5cqw;color:#55665b}
+.fl{font-family:'Nunito';font-weight:800;font-size:2cqw;background:#fff;border:.22cqw solid #d8cfb5;border-radius:1cqw;padding:.7cqw 1.1cqw;color:#2b3b33;flex:1 1 0;text-align:left;box-shadow:0 .3cqw .8cqw rgba(0,0,0,.07)}
+.fl.fla{background:#e9f8ee;border-color:#2f7d4f;color:#1f5c37}
+.arw{font-size:2.6cqw;color:#2f7d4f;flex:0 0 auto;animation:float 1.6s ease-in-out infinite}
+.num{flex:0 0 auto;width:3cqw;height:3cqw;border-radius:50%;background:#2f7d4f;color:#fff;font-family:'Kanit';font-size:1.6cqw;display:flex;align-items:center;justify-content:center}
+.tipbar{position:absolute;left:14%;right:14%;top:85%;text-align:center;background:#fff7d6;border:.22cqw solid #e9c55a;border-radius:3cqw;padding:.6cqw 1.4cqw;font-family:'Kanit';font-size:1.75cqw;color:#5a4500;animation:lrise .7s .9s both}
 /* ===== Eco-Crisis Lifeline (poster style) ===== */
 .lf{margin:-6px -8px;background:radial-gradient(circle at 20% 10%,#1e78c8,#0b4f95 60%,#083d78);border-radius:18px;padding:14px 16px 12px;color:#fff;font-family:'Kanit';position:relative;overflow:hidden}
 .lf::before{content:'';position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,.18) 2px,transparent 3px) 0 0/46px 46px;opacity:.35;pointer-events:none}
@@ -369,7 +403,7 @@ body.noanim .lays,body.noanim .lfx,body.noanim .fx{display:none}
 
   <div class="main" id="main">
     <div class="stage" id="stage">
-      <div class="frame" id="frame"><div class="inner" id="inner"><img id="slideImg" alt="slide"><div class="lays" id="lays"></div><div class="lfx" id="lfx"></div><div class="fx" id="fx"></div><div class="ovl" id="ovl"></div></div></div>
+      <div class="frame" id="frame"><div class="inner" id="inner"><img id="slideImg" alt="slide"><div class="stat" id="stat"></div><div class="lays" id="lays"></div><div class="lfx" id="lfx"></div><div class="fx" id="fx"></div><div class="ovl" id="ovl"></div></div></div>
       <button class="nav l" id="prev" aria-label="ก่อนหน้า">‹</button>
       <button class="nav r" id="next" aria-label="ถัดไป">›</button>
       <div class="counter" id="counter"></div>
@@ -537,8 +571,8 @@ body.noanim .lays,body.noanim .lfx,body.noanim .fx{display:none}
 const PH = {
   engage:{name:'Engage',th:'สร้างความสนใจ',min:5,c:'var(--engage)'},
   explore:{name:'Explore',th:'สำรวจค้นหา',min:7,c:'var(--explore)'},
-  explain:{name:'Explain',th:'อธิบาย/ค้นพบกฎ',min:19,c:'var(--explain)'},
-  elaborate:{name:'Elaborate',th:'ขยายความรู้',min:11,c:'var(--elaborate)'},
+  explain:{name:'Explain',th:'อธิบาย/ค้นพบกฎ',min:20,c:'var(--explain)'},
+  elaborate:{name:'Elaborate',th:'ขยายความรู้',min:10,c:'var(--elaborate)'},
   evaluate:{name:'Evaluate',th:'ประเมินผล',min:8,c:'var(--evaluate)'}
 };
 const PH_ORDER=['engage','explore','explain','elaborate','evaluate'];
@@ -593,7 +627,7 @@ const S = [
   do:['ย้อนกลับไปที่ประโยค Magic Wand ของนักเรียน: “Your sentences were Dream World sentences!”'],
   ans:'ซ้าย YES (Real future) · ขวา NO (Imaginary dream)',
   tools:[]},
- {img:'s12',ph:'explain',min:3,title:'Step 4: Grammar Detective',
+ {img:'s12',ph:'explain',min:2,title:'Step 4: Grammar Detective',
   goal:'วิเคราะห์ข้อผิดพลาดที่พบบ่อย',
   say:['What is wrong? Why doesn’t it work? Can you fix it?'],
   do:['ให้กลุ่มคุยกัน 1 นาที แล้วสุ่มกลุ่มตอบ · ให้คะแนนกลุ่มที่แก้ถูก'],
@@ -605,12 +639,12 @@ const S = [
   do:['เรียกตัวแทนกลุ่มออกมาวางจิ๊กซอว์บนจอ'],
   ans:'First = If + Present Simple, will + V1 · Second = If + Past Simple, would + V1',
   tools:['puzzle']},
- {img:'s14',ph:'explain',min:2,title:'Step 5: First Conditional',
+ {img:'s14',ph:'explain',min:1,title:'Step 5: First Conditional',
   goal:'ยืนยันกฎ Type 1 — เหตุการณ์ที่มีโอกาสเกิดขึ้นจริงในอนาคต',
   say:['If we plant trees, the air will be clean.','Now you: give me one more First Conditional sentence!'],
   ans:'If + S + V.1 (Present Simple), S + will + V.1',
   tools:['picker']},
- {img:'s15',ph:'explain',min:2,title:'Step 5: Second Conditional',
+ {img:'s15',ph:'explain',min:1,title:'Step 5: Second Conditional',
   goal:'ยืนยันกฎ Type 2 — สมมติ/จินตนาการ',
   say:['If I had magic, I would clean the ocean.','Tip: we use <b>were</b> with every subject — If I were…, If she were…'],
   ans:'If + S + V.2 (Past Simple), S + would + V.1',
@@ -624,6 +658,24 @@ const S = [
   say:['Copy the Memory Map into your notebook.'],
   do:['เช็กความเข้าใจเร็ว ๆ: ครูพูดประโยค ให้นักเรียนชู 1 นิ้ว (Type 1) หรือ 2 นิ้ว (Type 2)'],
   tools:['world']},
+ {img:'s20a',ph:'explain',min:1,title:'Step 6A: Flip the Sentence! — First Conditional',
+  goal:'สอนการเอา Main Clause ขึ้นต้นประโยค (First Conditional) และกฎเรื่อง comma',
+  say:['Look! We can flip the sentence. The meaning is the same.','If we recycle, we will reduce waste. → We will reduce waste if we recycle.','When the main clause comes first, do we need a comma? — No!'],
+  do:['กดเฉลยขั้น 1: ประโยคสลับฝั่ง · ขั้น 2: คอมม่าหาย + if ตัวเล็ก · ขั้น 3: สูตร','ให้นักเรียนอ่านออกเสียงทั้ง 2 แบบ แล้วถามว่าความหมายต่างกันไหม (ไม่ต่าง)'],
+  ans:'S + will + V1 + if + S + V1 (Present Simple) · Main Clause ขึ้นก่อน = ไม่มี comma',
+  tools:['check']},
+ {img:'s20b',ph:'explain',min:1,title:'Step 6B: Flip the Sentence! — Second Conditional',
+  goal:'สอนการเอา Main Clause ขึ้นต้นประโยค (Second Conditional)',
+  say:['Now the Dream World. If I were a hero, I would protect forests.','Flip it! → I would protect forests if I were a hero.','Comma? — No comma! And we still use “were”.'],
+  do:['กดเฉลยทีละขั้นเหมือน 6A','ถามย้ำ: ส่วน if ยังใช้ Past Simple / were เหมือนเดิมไหม? (ใช่)'],
+  ans:'S + would + V1 + if + S + V2 / were · ไม่มี comma',
+  tools:['check']},
+ {img:'s20c',ph:'explain',min:2,title:'Flip It! Your Turn',
+  goal:'ฝึกพลิกประโยคให้ Main Clause ขึ้นก่อน ทั้ง Type 1 และ Type 2',
+  say:['Your turn! Flip these sentences. Main clause first.','Work in pairs for 1 minute.','Remember: no comma, small “if”.'],
+  do:['จับเวลา 1 นาที ให้คู่เขียนลงสมุด','สุ่มคู่ตอบทีละข้อ แล้วกดเฉลยทีละข้อ · ตรวจประโยคนักเรียนด้วย Lifeline ได้ (รองรับ Main Clause ขึ้นก่อน)'],
+  ans:'1) There will be less plastic if people use cloth bags. · 2) I would clean the river if I had a boat. · 3) We will save energy if we turn off the lights.',
+  tools:['timer','picker','check']},
  {img:'s19',ph:'explain',min:1,title:'Mission Complete — Discovery',
   goal:'ชื่นชมและทบทวนกระบวนการ Observe → Compare → Discover → Analyze → Build',
   say:['Congratulations! You discovered the secret grammar by yourselves.','You are now ready for the Green Hero Cases!'],
@@ -634,7 +686,7 @@ const S = [
   do:['จับเวลา Think 1′ → Pair 2′ → Share 2′','สุ่มคู่ออกมาแชร์ แล้วตรวจด้วย Sentence Checker ให้ทั้งห้องดู'],
   ans:'If we plant more trees, the air will be cleaner. · If I were a Green Hero, I would stop plastic waste.',
   tools:['timer','picker','check']},
- {img:'s07b',ph:'elaborate',min:6,title:'The Eco-Crisis Lifeline',
+ {img:'s07b',ph:'elaborate',min:5,title:'The Eco-Crisis Lifeline',
   goal:'ฝึกเขียนประโยคเป็นกลุ่ม + ตรวจแก้ (Commander checks)',
   say:['Your Commander will check your sentences!','Look at the clue for your zone. Fix the errors to bring the Turtle back to the SAFE ZONE!'],
   do:['แต่ละกลุ่มเขียนประโยค Type 1 + Type 2 เรื่องสิ่งแวดล้อม อย่างน้อย 2 ประโยค','ครูตรวจประโยคด้วย 🐢 Eco-Crisis Lifeline แล้วเลื่อนเต่าล็อกระดับ SAFE / WARNING / CRITICAL / CRISIS — นักเรียนดูคำใบ้และพิกัดการตรวจ 7 จุด แล้วแก้เอง (ครูไม่บอกคำตอบ)','กลุ่มที่เต่าเข้า SAFE ZONE ได้รับคะแนน','ถ้าเวลาพอ/คาบต่อเนื่อง: เล่น Eco Hero Sentence Race หรือบอร์ดเกม Eco Hero Planet Rescue (ดู 📦 สื่อการสอน)'],
@@ -654,6 +706,13 @@ const S = [
 const R=(x1,y1,x2,y2)=>({l:x1/11.7,t:(y1-86)/6.55,w:(x2-x1)/11.7,h:(y2-y1)/6.55});
 const G='#2f7d4f',B='#2f6fb3',P='#7b4bb5',O='#e07a2e',RD='#d64545';
 const BUILDS={
+ s20a:[[{c:'h',r:{l:8,t:43,w:84,h:15},t:'<span class="rl">② Main ขึ้นก่อน</span><span class="ck or flo"><small>Main Clause</small>We will reduce waste</span><span class="nc">🚫,</span><span class="ck bl flb"><small>If Clause</small>if we recycle.</span>'}],
+      [{c:'h',r:{l:8,t:60,w:84,h:8},t:'<span class="note2 pp">✂️ Main Clause ขึ้นก่อน = ไม่ต้องมี comma ( , ) · <b>if</b> ตัวเล็ก</span>'}],
+      [{c:'h',r:{l:10,t:71,w:80,h:14},t:'<span class="fbox pp"><span class="ss">S</span> + <span class="mm">will</span> + <span class="vv">V1</span> &nbsp;+&nbsp; <span class="ii">if</span> &nbsp;+&nbsp; <span class="ss">S</span> + <span class="vv">V1</span><small>Main Clause &nbsp;+&nbsp; if &nbsp;+&nbsp; If Clause (Present Simple)</small></span>'}]],
+ s20b:[[{c:'h',r:{l:8,t:43,w:84,h:15},t:'<span class="rl p">② Main ขึ้นก่อน</span><span class="ck or flo"><small>Main Clause</small>I would protect forests</span><span class="nc">🚫,</span><span class="ck bl flb"><small>If Clause</small>if I were a hero.</span>'}],
+      [{c:'h',r:{l:8,t:60,w:84,h:8},t:'<span class="note2 pp">✂️ ไม่ต้องมี comma · <b>if</b> ตัวเล็ก · ยังใช้ <b>were</b> กับทุกประธาน</span>'}],
+      [{c:'h',r:{l:10,t:71,w:80,h:14},t:'<span class="fbox p pp"><span class="ss">S</span> + <span class="mm">would</span> + <span class="vv">V1</span> &nbsp;+&nbsp; <span class="ii">if</span> &nbsp;+&nbsp; <span class="ss">S</span> + <span class="vv">V2 / were</span><small>Main Clause &nbsp;+&nbsp; if &nbsp;+&nbsp; If Clause (Past Simple)</small></span>'}]],
+ s20c:[0,1,2].map(i=>[{c:'cover',r:{l:53.6,t:23.4+i*19.5,w:38.8,h:16.2},t:'ข้อ '+(i+1)}]),
  s05:[[{c:'cover',r:R(176,544,464,592),t:'สูตร World 1'},{c:'cover',r:R(120,658,502,710),t:'ความหมาย?'}],
       [{c:'cover',r:R(708,544,1002,592),t:'สูตร World 2'},{c:'cover',r:R(668,658,1048,710),t:'ความหมาย?'}]],
  s09:[[{c:'ring',r:R(222,330,276,390),col:'#e9b730'},{c:'ring',r:R(224,480,278,540),col:'#e9b730'},{c:'tag',r:R(55,555,215,592),t:'Both start with IF!',col:O}],
@@ -727,6 +786,7 @@ const FX={
  s18:[{t:'halo',r:R(500,500,680,640)},{t:'spk',p:PT(590,520),dl:.2},{t:'spk',p:PT(560,580),dl:.9},{t:'spk',p:PT(630,560),dl:1.5},{t:'glint',r:R(160,125,1010,200),d:5}],
  s19:[{t:'spk',p:PT(470,330),dl:.2},{t:'spk',p:PT(870,360),dl:.8},{t:'spk',p:PT(650,300),dl:1.3}],
  s23:[{t:'dots',r:R(570,437,700,445)},{t:'spk',p:PT(560,450),dl:.3},{t:'spk',p:PT(700,425),dl:1},{t:'spk',p:PT(300,600),dl:1.6}],
+ s20a:[{t:'spk',p:PT(150,170),dl:.2},{t:'spk',p:PT(1020,170),dl:1}],s20b:[{t:'spk',p:PT(150,170),dl:.5},{t:'spk',p:PT(1020,170),dl:1.2},{t:'spk',p:PT(1050,300),dl:.8}],s20c:[{t:'spk',p:PT(330,150),dl:.3},{t:'spk',p:PT(850,150),dl:1.1}],
  s24:[...[...Array(16)].map((_,i)=>({t:'fall',p:PT(40+i*72,90),c:['#ff9ec4','#ffe066','#9be3ff','#b6f09c','#d3b3ff','#ffc078'][i%6],dl:-Math.random()*7,d:6+Math.random()*4})),{t:'halo',r:R(400,280,780,560)}]
 };
 function buildLiving(s){
@@ -748,6 +808,21 @@ function buildLiving(s){
     if(o.t==='spk')e.textContent='✦';if(o.t==='fly')e.innerHTML=`<b>${o.ch}</b>`;
     X.appendChild(e)});
 }
+const STATIC={
+ s20a:`<div class="sl-title">🔄 Step 6A: Flip the Sentence! <span style="color:#2f7d4f">First Conditional</span></div>
+  <div class="sl-sub">เอา Main Clause ขึ้นต้นประโยคได้ · ความหมายเหมือนเดิม 100%</div>
+  <div class="hrow" style="top:25%;height:15%;animation-delay:.5s"><span class="rl">① If ขึ้นก่อน</span><span class="ck bl"><small>If Clause</small>If we recycle</span><span class="cm">,</span><span class="ck or"><small>Main Clause</small>we will reduce waste.</span></div>`,
+ s20b:`<div class="sl-title">🔄 Step 6B: Flip the Sentence! <span style="color:#7b4bb5">Second Conditional</span></div>
+  <div class="sl-sub">โลกจินตนาการก็พลิกได้ · ความหมายเหมือนเดิม 100%</div>
+  <div class="hrow" style="top:25%;height:15%;animation-delay:.5s"><span class="rl p">① If ขึ้นก่อน</span><span class="ck bl"><small>If Clause</small>If I were a hero</span><span class="cm">,</span><span class="ck or"><small>Main Clause</small>I would protect forests.</span></div>`,
+ s20c:`<div class="sl-title">🔄 Flip It! Your Turn</div>
+  <div class="sl-sub">พลิกประโยคให้ Main Clause ขึ้นก่อน · คิดเป็นคู่ 1 นาที</div>
+  ${[['If people use cloth bags, there will be less plastic.','There will be less plastic if people use cloth bags.'],
+     ['If I had a boat, I would clean the river.','I would clean the river if I had a boat.'],
+     ['If we turn off the lights, we will save energy.','We will save energy if we turn off the lights.']].map(([q,a],i)=>
+   `<div class="hrow" style="top:${24+i*19.5}%;height:15%;align-items:stretch;animation-delay:${.4+i*.25}s"><span class="num" style="align-self:center">${i+1}</span><span class="fl" style="display:flex;align-items:center">${q}</span><span class="arw" style="align-self:center">➜</span><span class="fl fla" style="display:flex;align-items:center">✔ ${a}</span></div>`).join('')}
+  <div class="tipbar">💡 ① ย้าย Main Clause มาข้างหน้า &nbsp;② ตัด comma &nbsp;③ <b>If</b> → <b>if</b> ตัวเล็ก</div>`
+};
 const ENTER_FX={s01:'sparkle',s03:'sparkle',s19:'confetti',s24:'confetti'};
 const DREAM=new Set(['s03','s04','s15','s24']);
 const TOOLS = {
@@ -810,7 +885,7 @@ function go(i){
   const s=S[cur],p=PH[s.ph];
   $('#slideImg').src=`img/${s.img}.jpg`;
   const fr=$('#frame');fr.classList.remove('enter');void fr.offsetWidth;fr.classList.add('enter');
-  buildLiving(s);buildOverlay(s);bstep=0;applyBuild();
+  $('#stat').innerHTML=STATIC[s.img]||'';buildLiving(s);buildOverlay(s);bstep=0;applyBuild();
   if(ENTER_FX[s.img]==='confetti')setTimeout(confetti,500);
   if(ENTER_FX[s.img]==='sparkle')setTimeout(()=>{beep('pop')},350);
   $$('.ph').forEach(b=>b.classList.toggle('on',b.dataset.k===s.ph));
@@ -847,6 +922,7 @@ function buildOverlay(s){
     sp.textContent=em[i%3];sp.style.cssText=`left:${left}%;top:${45+Math.random()*50}%;--d:${9+Math.random()*7}s;--dl:${-Math.random()*10}s;--mx:${(Math.random()-.5)*8}cqw`;fx.appendChild(sp)}
 }
 function applyBuild(){
+  $('#ovl').className='ovl'+Array.from({length:bstep},(_,i)=>' st'+(i+1)).join('');
   $$('#ovl [data-hide]').forEach(d=>d.classList.toggle('gone',+d.dataset.hide<=bstep));
   $$('#ovl [data-show]').forEach(d=>d.classList.toggle('in',+d.dataset.show<=bstep));
   const tot=(BUILDS[S[cur].img]||[]).length;
