@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แบบประเมินความพึงพอใจ · Eco-Heroes (ม.4)</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=Sarabun:wght@400;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#f6f2e6;--paper:#fffdf6;--ink:#20302a;--muted:#5d6b64;--line:#ddd7c4;--green:#2f7d4f;--g2:#e3f1e7;--blue:#2f6fb3;--purple:#7b4bb5;--red:#d64545;--yellow:#e9b730}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Sarabun',sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 0,#e6f3df,transparent 40%),radial-gradient(circle at 100% 100%,#fbe9c9,transparent 45%),var(--bg);min-height:100vh}
+button{font-family:inherit;cursor:pointer}
+.wrap{max-width:860px;margin:0 auto;padding:18px 14px 60px}
+.hero{background:linear-gradient(135deg,#1f4d36,#2f7d4f);color:#fff;border-radius:22px;padding:20px 22px;position:relative;overflow:hidden;box-shadow:0 10px 26px rgba(31,77,54,.25)}
+.hero::after{content:'🌍🌿';position:absolute;right:14px;bottom:-6px;font-size:64px;opacity:.25}
+.hero h1{font-family:'Kanit';font-weight:600;font-size:24px;margin:0 0 4px;line-height:1.25}
+.hero p{margin:2px 0;font-size:15px;opacity:.92}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px 18px;margin-top:14px;box-shadow:0 4px 14px rgba(0,0,0,.04)}
+.card h2{font-family:'Kanit';font-weight:600;font-size:20px;margin:0 0 8px;color:var(--green)}
+.muted{color:var(--muted);font-size:14.5px;line-height:1.55}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.legend span{background:var(--g2);border-radius:20px;padding:2px 10px;font-size:13.5px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.chip{border:2px solid var(--line);background:#fff;border-radius:14px;padding:9px 16px;font-size:16px;font-family:'Kanit'}
+.chip.on{border-color:var(--green);background:var(--g2);color:var(--green);font-weight:600}
+select,textarea,input{font-family:inherit;font-size:17px;border:2px solid var(--line);border-radius:12px;padding:9px 12px;background:#fff}
+textarea{width:100%;min-height:110px;resize:vertical}
+.sec{font-family:'Kanit';font-weight:600;font-size:17px;color:#fff;background:var(--green);border-radius:12px;padding:7px 14px;margin:18px 0 6px}
+.q{border-bottom:1px dashed var(--line);padding:12px 2px}
+.q:last-child{border-bottom:0}
+.qt{font-size:16.5px;line-height:1.45;margin-bottom:8px}
+.qt b{font-family:'Nunito';color:var(--green);margin-right:6px}
+.q.miss .qt{color:var(--red)}
+.lik{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.lik button{border:2px solid var(--line);background:#fff;border-radius:14px;padding:6px 2px;line-height:1.1;transition:.15s}
+.lik button i{display:block;font-style:normal;font-size:24px}
+.lik button small{display:block;font-family:'Kanit';font-size:12.5px;color:var(--muted);margin-top:2px}
+.lik button.on{border-color:var(--green);background:var(--g2);transform:translateY(-2px);box-shadow:0 4px 10px rgba(47,125,79,.2)}
+.lik button.on small{color:var(--green);font-weight:600}
+.bar{position:sticky;top:0;z-index:5;background:rgba(246,242,230,.95);backdrop-filter:blur(4px);padding:8px 0;margin:0 -2px}
+.prog{height:12px;background:#e8e3d2;border-radius:10px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7fc48f,var(--green));transition:width .3s}
+.pt{font-family:'Kanit';font-size:14px;color:var(--muted);margin-top:3px;text-align:right}
+.btn{border:0;border-radius:14px;padding:13px 22px;font-family:'Kanit';font-size:19px;background:var(--green);color:#fff;box-shadow:0 4px 0 #1f5c37}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #1f5c37}
+.btn.alt{background:#e8e3d2;color:var(--ink);box-shadow:0 4px 0 #c9c2ad}
+.btn:disabled{opacity:.5}
+.err{color:var(--red);font-family:'Kanit';margin-top:8px;min-height:22px}
+.done{text-align:center;padding:40px 20px}
+.done .big{font-size:72px;animation:pop .7s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.2)}to{transform:none}}
+.done h2{font-family:'Kanit';font-size:26px;color:var(--green);margin:8px 0}
+/* teacher */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.stat b{display:block;font-family:'Nunito';font-size:30px;color:var(--green)}
+.stat span{font-family:'Kanit';font-size:14px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;vertical-align:top}
+th{font-family:'Kanit';font-weight:500;background:#f0ebdc;position:sticky;top:0}
+td.n,th.n{text-align:center;white-space:nowrap;font-family:'Nunito';font-weight:800}
+tr.sh td{background:var(--g2);font-family:'Kanit';font-weight:600;color:var(--green)}
+tr.tot td{background:#1f4d36;color:#fff;font-family:'Kanit';font-weight:600}
+.lv{display:inline-block;border-radius:10px;padding:1px 9px;font-family:'Kanit';font-size:13px;color:#fff}
+.mini{height:8px;background:#e8e3d2;border-radius:6px;overflow:hidden;min-width:80px;margin-top:4px}
+.mini i{display:block;height:100%;background:var(--green)}
+.sug{background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 12px;margin:6px 0;font-size:15.5px;line-height:1.5}
+.sug small{color:var(--muted);font-family:'Kanit'}
+#qr{background:#fff;padding:10px;border-radius:12px;display:inline-block}
+.tabs{display:flex;gap:6px;margin-top:12px}
+.tabs a{font-family:'Kanit';text-decoration:none;color:var(--green);background:#fff;border:2px solid var(--line);border-radius:12px;padding:6px 14px}
+.hidden{display:none!important}
+@media (max-width:520px){.hero h1{font-size:20px}.lik button i{font-size:21px}.lik button small{font-size:11px}th,td{font-size:13.5px;padding:6px 4px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <h1>แบบประเมินความพึงพอใจต่อการจัดการเรียนรู้</h1>
+    <p>เรื่อง First &amp; Second Conditionals · Eco-Heroes: Save the World with Conditionals</p>
+    <p>ชั้นมัธยมศึกษาปีที่ 4 · ภาคเรียนที่ 2/2569 · ครูปรัชญา ทรงบรรพต · โรงเรียนวรราชาทินัดดามาตุวิทยา</p>
+  </div>
+
+  <!-- ===== STUDENT FORM ===== -->
+  <div id="student">
+    <div class="card">
+      <h2>คำชี้แจง</h2>
+      <div class="muted">แตะเลือกระดับความพึงพอใจที่ตรงกับความรู้สึกจริงของนักเรียนทุกข้อ (20 ข้อ) <b>ไม่ต้องใส่ชื่อ</b> คำตอบไม่มีผลต่อคะแนน ครูจะนำไปปรับปรุงการสอนเท่านั้น</div>
+      <div class="legend"><span>😍 5 มากที่สุด</span><span>🙂 4 มาก</span><span>😐 3 ปานกลาง</span><span>🙁 2 น้อย</span><span>😞 1 น้อยที่สุด</span></div>
+    </div>
+
+    <div class="card">
+      <h2>ตอนที่ 1 ข้อมูลทั่วไป</h2>
+      <div class="qt">เพศ</div>
+      <div class="row" id="gender">
+        <button class="chip" data-v="m">👦 ชาย</button><button class="chip" data-v="f">👧 หญิง</button><button class="chip" data-v="x">🙂 ไม่ประสงค์ระบุ</button>
+      </div>
+      <div class="qt" style="margin-top:12px">ห้องเรียน</div>
+      <div class="row"><span style="font-family:Kanit;font-size:18px">ม.4/</span><select id="room"><option value="">เลือกห้อง</option></select></div>
+    </div>
+
+    <div class="card">
+      <h2>ตอนที่ 2 ระดับความพึงพอใจ</h2>
+      <div class="bar"><div class="prog"><i id="progI"></i></div><div class="pt" id="progT">ตอบแล้ว 0/20</div></div>
+      <div id="qs"></div>
+    </div>
+
+    <div class="card">
+      <h2>ตอนที่ 3 ข้อเสนอแนะเพิ่มเติม</h2>
+      <textarea id="sug" maxlength="1000" placeholder="พิมพ์ข้อเสนอแนะถึงครู (ไม่บังคับ)"></textarea>
+    </div>
+
+    <div style="text-align:center;margin-top:16px">
+      <button class="btn" id="send">📨 ส่งแบบประเมิน</button>
+      <div class="err" id="err"></div>
+    </div>
+  </div>
+
+  <div id="thanks" class="card done hidden">
+    <div class="big">🌳</div>
+    <h2>ขอบคุณมาก Eco-Hero!</h2>
+    <div class="muted">ส่งแบบประเมินเรียบร้อยแล้ว คำตอบของนักเรียนช่วยให้ครูสอนได้ดีขึ้น</div>
+    <div style="margin-top:16px"><button class="btn alt" id="again">ตอบใหม่ (เครื่องนี้ใช้ร่วมกับเพื่อน)</button></div>
+  </div>
+
+  <!-- ===== TEACHER DASHBOARD ===== -->
+  <div id="teacher" class="hidden">
+    <div class="card">
+      <h2>👩‍🏫 สรุปผลการประเมิน (สำหรับครู)</h2>
+      <div class="row" style="justify-content:space-between;align-items:flex-start">
+        <div class="muted" style="flex:1;min-width:240px">ให้นักเรียนสแกน QR หรือเปิดลิงก์ด้านล่าง ผลจะอัปเดตเองทุก 15 วินาที<br><b id="stuLink" style="word-break:break-all;color:var(--green)"></b>
+          <div class="row" style="margin-top:10px">
+            <label>ห้อง <select id="fRoom"><option value="">ทุกห้อง</option></select></label>
+            <button class="btn alt" id="refresh" style="font-size:15px;padding:8px 14px">↻ รีเฟรช</button>
+            <button class="btn alt" id="csv" style="font-size:15px;padding:8px 14px">⬇️ CSV</button>
+          </div>
+        </div>
+        <div id="qr"></div>
+      </div>
+    </div>
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><b id="sN">0</b><span>จำนวนผู้ตอบ (n)</span></div>
+      <div class="stat"><b id="sM">–</b><span>ค่าเฉลี่ยรวม (x̄)</span></div>
+      <div class="stat"><b id="sSD">–</b><span>S.D. รวม</span></div>
+      <div class="stat"><b id="sL" style="font-size:22px;padding:6px 0">–</b><span>ระดับความพึงพอใจ</span></div>
+    </div>
+    <div class="card">
+      <h2>สรุปรายด้าน</h2>
+      <div style="overflow-x:auto"><table id="tSec"></table></div>
+    </div>
+    <div class="card">
+      <h2>ผลรายข้อ</h2>
+      <div style="overflow-x:auto"><table id="tItem"></table></div>
+      <div class="muted" style="margin-top:8px">เกณฑ์แปลความหมาย (บุญชม ศรีสะอาด, 2545): 4.51–5.00 มากที่สุด · 3.51–4.50 มาก · 2.51–3.50 ปานกลาง · 1.51–2.50 น้อย · 1.00–1.50 น้อยที่สุด · เกณฑ์ผ่าน x̄ ≥ 3.51 · S.D. แบบกลุ่มตัวอย่าง (n−1)</div>
+    </div>
+    <div class="card">
+      <h2>ข้อเสนอแนะเพิ่มเติม (<span id="sugN">0</span>)</h2>
+      <div id="sugs" class="muted">ยังไม่มีข้อเสนอแนะ</div>
+    </div>
+    <div class="err" id="terr"></div>
+  </div>
+
+  <div class="tabs" id="nav"></div>
+</div>
+
+<script>
+const SB_URL='https://rwvgunkkcrddijkxguej.supabase.co';
+const SB_KEY='sb_publishable_pKnRXFNGNDERrv_2Odcszg_bP6GB5-Q';
+const TABLE='eh_satisfaction';
+let sb=null;try{sb=supabase.createClient(SB_URL,SB_KEY)}catch(e){}
+
+const SECTIONS=[
+ ['ด้านที่ 1 การจัดกิจกรรมการเรียนรู้',[
+  'ครูแจ้งจุดประสงค์การเรียนรู้ให้ทราบก่อนเริ่มเรียน',
+  'กิจกรรมเรียงตามลำดับชัดเจน เข้าใจง่าย (สร้างความสนใจ → สำรวจ → ค้นพบกฎ → ฝึกใช้ → ประเมินผล)',
+  'ฉันได้ค้นพบกฎไวยากรณ์ด้วยตนเองจากคำถามของครู (Step 1–6)',
+  'ฉันได้ทำงานร่วมกับเพื่อนเป็นคู่และเป็นกลุ่ม (Think–Pair–Share, Grammar Detective)',
+  'เวลาที่ใช้ในแต่ละกิจกรรมเหมาะสม']],
+ ['ด้านที่ 2 สื่อและนวัตกรรม',[
+  'สไลด์สอนมีภาพสวยงาม น่าสนใจ และอ่านง่าย',
+  'แอนิเมชันและการเฉลยทีละขั้นช่วยให้ฉันคิดตามได้',
+  'กิจกรรม Real or Dream? ช่วยให้ฉันแยก First และ Second Conditional ได้',
+  'Eco-Crisis Lifeline ช่วยให้ฉันรู้จุดผิดและแก้ประโยคได้ด้วยตนเอง',
+  'บัตรคำและ Sentence Mat (Eco Hero Planet Rescue) ช่วยให้ฉันเรียงประโยคได้ถูกต้อง']],
+ ['ด้านที่ 3 บรรยากาศและครูผู้สอน',[
+  'บรรยากาศในห้องเรียนสนุกและผ่อนคลาย',
+  'ฉันกล้าถาม กล้าตอบ และกล้าแสดงความคิดเห็น',
+  'ครูอธิบายชัดเจน และให้คำแนะนำเมื่อฉันทำผิด',
+  'ครูเปิดโอกาสให้นักเรียนทุกคนมีส่วนร่วมอย่างทั่วถึง']],
+ ['ด้านที่ 4 การวัดและประเมินผล',[
+  'ครูแจ้งวิธีการและเกณฑ์การประเมินให้ทราบ',
+  'กิจกรรม 3-2-1 Exit Ticket (The Tree of Hope) เหมาะสมและสนุก',
+  'ฉันรู้ผลทันทีว่าตอบถูกหรือผิด และรู้วิธีแก้ไข']],
+ ['ด้านที่ 5 ประโยชน์ที่ได้รับ',[
+  'ฉันเข้าใจความแตกต่างระหว่าง First Conditional และ Second Conditional',
+  'ฉันแต่งประโยค If ได้ทั้งแบบ If ขึ้นก่อน และ Main Clause ขึ้นก่อน',
+  'ฉันตระหนักถึงการช่วยดูแลสิ่งแวดล้อมมากขึ้น']]
+];
+const ITEMS=[];SECTIONS.forEach(([s,its],si)=>its.forEach(t=>ITEMS.push({t,si})));
+const FACES=[[5,'😍','มากที่สุด'],[4,'🙂','มาก'],[3,'😐','ปานกลาง'],[2,'🙁','น้อย'],[1,'😞','น้อยที่สุด']];
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const ROOMS=Array.from({length:12},(_,i)=>String(i+1));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function level(m){if(m==null||isNaN(m))return['–','#999'];return m>=4.51?['มากที่สุด','#1f7a35']:m>=3.51?['มาก','#2f7d4f']:m>=2.51?['ปานกลาง','#b8860b']:m>=1.51?['น้อย','#d0702a']:['น้อยที่สุด','#d64545']}
+function stats(arr){const n=arr.length;if(!n)return{n:0,m:null,sd:null};const m=arr.reduce((a,b)=>a+b,0)/n;const sd=n>1?Math.sqrt(arr.reduce((a,b)=>a+(b-m)**2,0)/(n-1)):0;return{n,m,sd}}
+const f2=v=>v==null?'–':v.toFixed(2);
+
+/* ---------- student ---------- */
+const ans=Array(20).fill(0);let gender='',busy=false;
+function buildForm(){
+  ROOMS.forEach(r=>{$('#room').insertAdjacentHTML('beforeend',`<option value="${r}">${r}</option>`);$('#fRoom').insertAdjacentHTML('beforeend',`<option value="${r}">ม.4/${r}</option>`)});
+  let k=0,h='';
+  SECTIONS.forEach(([s,its])=>{h+=`<div class="sec">${s}</div>`;its.forEach(t=>{const i=k++;
+    h+=`<div class="q" id="q${i}"><div class="qt"><b>${i+1}.</b>${t}</div><div class="lik">${FACES.map(([v,e,l])=>`<button data-q="${i}" data-v="${v}"><i>${e}</i><small>${v} ${l}</small></button>`).join('')}</div></div>`})});
+  $('#qs').innerHTML=h;
+  $$('.lik button').forEach(b=>b.onclick=()=>{const q=+b.dataset.q;ans[q]=+b.dataset.v;$$(`.lik button[data-q="${q}"]`).forEach(x=>x.classList.toggle('on',x===b));$('#q'+q).classList.remove('miss');$('#err').textContent='';prog()});
+  $$('#gender .chip').forEach(b=>b.onclick=()=>{gender=b.dataset.v;$$('#gender .chip').forEach(x=>x.classList.toggle('on',x===b))});
+}
+function prog(){const d=ans.filter(Boolean).length;$('#progI').style.width=(d/20*100)+'%';$('#progT').textContent=`ตอบแล้ว ${d}/20`}
+$('#send').onclick=async()=>{
+  if(busy)return;const er=$('#err');er.textContent='';
+  if(!gender){er.textContent='กรุณาเลือกเพศ';$('#gender').scrollIntoView({behavior:'smooth',block:'center'});return}
+  if(!$('#room').value){er.textContent='กรุณาเลือกห้องเรียน';$('#room').scrollIntoView({behavior:'smooth',block:'center'});return}
+  const miss=ans.map((v,i)=>v?null:i).filter(v=>v!=null);
+  if(miss.length){miss.forEach(i=>$('#q'+i).classList.add('miss'));er.textContent=`ยังไม่ได้ตอบ ${miss.length} ข้อ (ข้อ ${miss.map(i=>i+1).join(', ')})`;$('#q'+miss[0]).scrollIntoView({behavior:'smooth',block:'center'});return}
+  if(!sb){er.textContent='เชื่อมต่อระบบไม่ได้ ลองรีเฟรชหน้าอีกครั้ง';return}
+  busy=true;$('#send').disabled=true;$('#send').textContent='กำลังส่ง…';
+  const {error}=await sb.from(TABLE).insert({gender,room:$('#room').value,scores:ans,suggestion:$('#sug').value.trim()||null});
+  busy=false;$('#send').disabled=false;$('#send').textContent='📨 ส่งแบบประเมิน';
+  if(error){er.textContent='ส่งไม่สำเร็จ: '+error.message+' — ลองอีกครั้ง หรือแจ้งครู';return}
+  $('#student').classList.add('hidden');$('#thanks').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});
+};
+$('#again').onclick=()=>{ans.fill(0);gender='';$$('.on').forEach(x=>x.classList.remove('on'));$('#sug').value='';$('#room').value='';prog();$('#thanks').classList.add('hidden');$('#student').classList.remove('hidden');window.scrollTo({top:0})};
+
+/* ---------- teacher ---------- */
+let rows=[],timer=null;
+async function load(){
+  if(!sb){$('#terr').textContent='เชื่อมต่อฐานข้อมูลไม่ได้';return}
+  const {data,error}=await sb.from(TABLE).select('created_at,gender,room,scores,suggestion').order('created_at',{ascending:false}).limit(5000);
+  if(error){$('#terr').textContent='โหลดผลไม่ได้: '+error.message;return}
+  $('#terr').textContent='';rows=data||[];render();
+}
+function render(){
+  const R=$('#fRoom').value?rows.filter(r=>r.room===$('#fRoom').value):rows;
+  const n=R.length;$('#sN').textContent=n;
+  const all=R.flatMap(r=>r.scores);const S=stats(all);
+  // overall mean = mean of each respondent's 20 answers pooled
+  $('#sM').textContent=f2(S.m);$('#sSD').textContent=f2(S.sd);const L=level(S.m);$('#sL').textContent=L[0];$('#sL').style.color=L[1];
+  const itemStats=ITEMS.map((_,i)=>stats(R.map(r=>r.scores[i])));
+  const secStats=SECTIONS.map((_,si)=>stats(R.flatMap(r=>ITEMS.map((it,i)=>it.si===si?r.scores[i]:null).filter(v=>v!=null))));
+  const rank=secStats.map((s,i)=>[s.m??-1,i]).sort((a,b)=>b[0]-a[0]).map(x=>x[1]);
+  const lvTag=m=>{const [t,c]=level(m);return `<span class="lv" style="background:${c}">${t}</span>`};
+  const bar=m=>m==null?'':`<div class="mini"><i style="width:${(m-1)/4*100}%"></i></div>`;
+  $('#tSec').innerHTML=`<tr><th>ด้าน</th><th class="n">x̄</th><th class="n">S.D.</th><th>ระดับ</th><th class="n">อันดับ</th></tr>`+
+    secStats.map((s,i)=>`<tr><td>${SECTIONS[i][0]}${bar(s.m)}</td><td class="n">${f2(s.m)}</td><td class="n">${f2(s.sd)}</td><td>${lvTag(s.m)}</td><td class="n">${n?rank.indexOf(i)+1:'–'}</td></tr>`).join('')+
+    `<tr class="tot"><td>รวมเฉลี่ย</td><td class="n">${f2(S.m)}</td><td class="n">${f2(S.sd)}</td><td>${level(S.m)[0]}</td><td></td></tr>`;
+  let h=`<tr><th class="n">ข้อ</th><th>รายการประเมิน</th><th class="n">x̄</th><th class="n">S.D.</th><th>ระดับ</th></tr>`;let k=0;
+  SECTIONS.forEach(([s,its],si)=>{h+=`<tr class="sh"><td></td><td>${s}</td><td class="n">${f2(secStats[si].m)}</td><td class="n">${f2(secStats[si].sd)}</td><td>${level(secStats[si].m)[0]}</td></tr>`;
+    its.forEach(t=>{const st=itemStats[k];h+=`<tr><td class="n">${k+1}</td><td>${t}${bar(st.m)}</td><td class="n">${f2(st.m)}</td><td class="n">${f2(st.sd)}</td><td>${lvTag(st.m)}</td></tr>`;k++})});
+  $('#tItem').innerHTML=h;
+  const sg=R.filter(r=>r.suggestion);$('#sugN').textContent=sg.length;
+  $('#sugs').innerHTML=sg.length?sg.map(r=>`<div class="sug">${esc(r.suggestion)}<br><small>ม.4/${esc(r.room)} · ${new Date(r.created_at).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'})}</small></div>`).join(''):'ยังไม่มีข้อเสนอแนะ';
+}
+function csv(){
+  const R=$('#fRoom').value?rows.filter(r=>r.room===$('#fRoom').value):rows;
+  const head=['เวลา','เพศ','ห้อง',...ITEMS.map((_,i)=>'ข้อ'+(i+1)),'ข้อเสนอแนะ'];
+  const g={m:'ชาย',f:'หญิง',x:'ไม่ระบุ'};
+  const lines=[head,...R.map(r=>[new Date(r.created_at).toLocaleString('th-TH'),g[r.gender]||r.gender,'ม.4/'+r.room,...r.scores,(r.suggestion||'').replace(/\n/g,' ')])]
+    .map(a=>a.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  const blob=new Blob(['﻿'+lines.join('\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='eco-heroes-satisfaction-m4.csv';document.body.appendChild(a);a.click();a.remove();
+}
+
+/* ---------- routing ---------- */
+function route(){
+  const t=location.hash==='#teacher';
+  $('#teacher').classList.toggle('hidden',!t);$('#student').classList.toggle('hidden',t);$('#thanks').classList.add('hidden');
+  $('#nav').innerHTML=t?'<a href="#">📝 หน้าแบบประเมิน (นักเรียน)</a>':'<a href="#teacher" style="opacity:.6">👩‍🏫 ครู</a>';
+  clearInterval(timer);
+  if(t){const link=location.href.split('#')[0];$('#stuLink').textContent=link;
+    if(!$('#qr').dataset.done&&window.QRCode){new QRCode($('#qr'),{text:link,width:170,height:170,colorDark:'#1f4d36'});$('#qr').dataset.done=1}
+    load();timer=setInterval(load,15000)}
+}
+$('#fRoom').onchange=render;$('#refresh').onclick=load;$('#csv').onclick=csv;
+addEventListener('hashchange',route);
+buildForm();prog();route();
+</script>
+</body>
+</html>
