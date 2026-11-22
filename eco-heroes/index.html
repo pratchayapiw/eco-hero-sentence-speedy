@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eco-Heroes: Save the World with Conditionals — Teaching Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=Sarabun:wght@400;600;700&family=Nunito:wght@600;800;900&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f1e8; --paper:#fffdf6; --ink:#20302a; --muted:#5d6b64; --line:#ddd7c4;
+  --green:#2f7d4f; --green2:#e3f1e7;
+  --engage:#e07a2e; --explore:#2f6fb3; --explain:#2f7d4f; --elaborate:#7b4bb5; --evaluate:#c94f7c;
+  --red:#d64545; --yellow:#e9b730;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:'Sarabun','Nunito',sans-serif;background:var(--bg);color:var(--ink);overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+.app{display:grid;grid-template-rows:auto 1fr auto;height:100vh}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:10px;padding:8px 14px;background:#1f4d36;color:#fff;flex-wrap:wrap}
+.brand{font-family:'Kanit';font-weight:600;font-size:18px;letter-spacing:.2px;margin-right:6px;white-space:nowrap}
+.brand small{font-weight:400;opacity:.75;font-size:13px;margin-left:6px}
+.phases{display:flex;gap:4px;flex:1;min-width:280px}
+.ph{flex:1;border:0;border-radius:8px;padding:5px 6px;font-family:'Kanit';font-size:13px;color:#fff;opacity:.45;line-height:1.15;text-align:center}
+.ph b{display:block;font-size:14px}
+.ph.on{opacity:1;box-shadow:0 0 0 2px #fff inset}
+.clock{display:flex;align-items:center;gap:6px;font-family:'Nunito';font-weight:800;background:rgba(255,255,255,.12);padding:4px 8px;border-radius:10px}
+.clock .t{font-size:20px;min-width:62px;text-align:center}
+.clock .t.over{color:#ffb3b3}
+.ibtn{border:0;background:rgba(255,255,255,.16);color:#fff;border-radius:8px;padding:6px 10px;font-size:14px;font-family:'Kanit'}
+.ibtn:hover{background:rgba(255,255,255,.28)}
+.ibtn.on{background:#fff;color:#1f4d36}
+
+/* main */
+.main{display:grid;grid-template-columns:1fr 380px;min-height:0}
+.main.nonotes{grid-template-columns:1fr 0}
+.stage{position:relative;display:flex;align-items:center;justify-content:center;padding:14px;min-height:0;background:#18231e}
+.frame{position:relative;container-type:size;flex:0 0 auto;cursor:pointer}
+.inner{position:absolute;inset:0;border-radius:8px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.45);animation:kb 16s ease-in-out infinite alternate}
+.frame.enter .inner{animation:slidein .75s cubic-bezier(.2,.9,.3,1),kb 16s ease-in-out .75s infinite alternate}
+@keyframes slidein{from{opacity:0;transform:scale(1.05) translateY(1.5%);filter:blur(4px)}to{opacity:1;transform:none;filter:none}}
+@keyframes kb{from{transform:scale(1)}to{transform:scale(1.018)}}
+.inner img{width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
+.ovl,.fx{position:absolute;inset:0;pointer-events:none}
+.fx span{position:absolute;font-size:2.1cqw;opacity:.0;animation:drift var(--d) ease-in-out var(--dl) infinite}
+@keyframes drift{0%{opacity:0;transform:translate(0,0) rotate(0)}15%{opacity:.75}50%{transform:translate(var(--mx),-6cqh) rotate(25deg)}85%{opacity:.75}100%{opacity:0;transform:translate(0,-12cqh) rotate(-10deg)}}
+.b{position:absolute;display:flex;align-items:center;justify-content:center;text-align:center}
+.b-cover{background:radial-gradient(circle at 30% 30%,#fffef8,#f5f0df);border:.28cqw dashed #8fb79d;border-radius:1.2cqw;font-family:'Kanit';font-size:2.1cqw;color:#2f7d4f;box-shadow:0 .4cqw 1.2cqw rgba(0,0,0,.12);transition:transform .6s cubic-bezier(.5,-0.3,.6,1),opacity .55s;animation:wob 2.6s ease-in-out infinite}
+.b-cover.purple{background:radial-gradient(circle at 30% 30%,#fbf8ff,#ece2f8);border-color:#b49ad6;color:#7b4bb5}
+.b-cover.gone{opacity:0;transform:perspective(600px) rotateX(85deg) scale(.85);animation:none}
+@keyframes wob{50%{transform:translateY(-.25cqh)}}
+.b-tag{background:var(--col,#2f7d4f);color:#fff;font-family:'Kanit';font-weight:500;font-size:1.65cqw;border-radius:2cqw;box-shadow:0 .4cqw 1cqw rgba(0,0,0,.28);white-space:nowrap;opacity:0;transform:scale(.3) rotate(-6deg);transition:.5s cubic-bezier(.3,1.7,.5,1)}
+.b-ring{border:.5cqw solid var(--col,#d64545);border-radius:50%;opacity:0;transform:scale(2.2);transition:.5s cubic-bezier(.3,1.5,.5,1)}
+.b-ring.in{animation:pulse 1.5s ease-in-out .5s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 1cqw rgba(233,183,48,.35)}}
+.b-ribbon{background:#e9f8ee;border:.3cqw solid #2f7d4f;border-radius:1cqw;font-family:'Nunito';font-weight:800;font-size:2.35cqw;color:#1f5c37;justify-content:flex-start;padding-left:1.2cqw;clip-path:inset(0 100% 0 0);transition:clip-path .9s cubic-bezier(.6,0,.2,1);box-shadow:0 .4cqw 1cqw rgba(0,0,0,.18)}
+.b-ribbon u{text-decoration:none;background:#c5ecd2;border-radius:.4cqw;padding:0 .3cqw}
+.b-chip{border-radius:1.3cqw;color:#fff;font-family:'Nunito';font-weight:800;font-size:2.3cqw;opacity:0;box-shadow:0 .5cqw 1.2cqw rgba(0,0,0,.3)}
+.b-chip.in{animation:fly 1s cubic-bezier(.3,1.25,.5,1) forwards}
+@keyframes fly{0%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(.75) rotate(-8deg)}70%{transform:translate(0,-1.5cqh) scale(1.08)}100%{opacity:1;transform:none}}
+.b-hand{font-family:'Caveat',cursive;font-size:2.9cqw;color:#1f6b3e;justify-content:flex-start;white-space:nowrap;clip-path:inset(0 100% 0 0);transition:clip-path 1.6s linear}
+.b.in.b-tag{opacity:1;transform:none}.b.in.b-ring{opacity:1;transform:none}.b.in.b-ribbon,.b.in.b-hand{clip-path:inset(0 0 0 0)}
+.revealbtn{background:#e9b730!important;color:#3a2b00!important;animation:glow 1.6s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:0 0 0 6px rgba(233,183,48,.35)}}
+.nav{position:absolute;top:50%;transform:translateY(-50%);width:54px;height:54px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:28px;opacity:.55}
+.nav:hover{opacity:1}
+.nav.l{left:10px}.nav.r{right:10px}
+.counter{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.45);border-radius:20px;padding:3px 12px;font-family:'Nunito';font-weight:800;font-size:13px}
+.quick{position:absolute;bottom:10px;right:14px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:70%}
+.quick button{border:0;border-radius:20px;padding:6px 12px;font-family:'Kanit';font-size:14px;background:#fff;color:#1f4d36;box-shadow:0 3px 10px rgba(0,0,0,.3)}
+
+.notes{background:var(--paper);border-left:1px solid var(--line);overflow:auto;padding:14px 16px 24px}
+.main.nonotes .notes{display:none}
+.ntag{display:inline-block;color:#fff;border-radius:6px;padding:2px 8px;font-family:'Kanit';font-size:13px}
+.ntitle{font-family:'Kanit';font-size:21px;font-weight:600;margin:8px 0 2px;line-height:1.25}
+.nmeta{color:var(--muted);font-size:14px;margin-bottom:10px}
+.nsec{margin:12px 0 4px;font-family:'Kanit';font-size:14px;color:var(--green);font-weight:600;letter-spacing:.3px}
+.say{background:#eef6f0;border-left:4px solid var(--green);padding:8px 10px;border-radius:6px;font-family:'Nunito';font-weight:700;font-size:15.5px;line-height:1.45;margin:4px 0}
+.notes ul{margin:4px 0;padding-left:20px;line-height:1.55;font-size:15.5px}
+.ans{background:#fff6dc;border:1px dashed #d9b84a;border-radius:8px;padding:8px 10px;font-size:15px;line-height:1.5;filter:blur(6px);cursor:pointer;transition:filter .3s;user-select:none}
+.ans.show{filter:none}
+.anshint{font-size:12.5px;color:var(--muted);margin:2px 0 0}
+.toolbtn{display:block;width:100%;margin-top:8px;border:0;border-radius:10px;padding:10px;background:var(--green);color:#fff;font-family:'Kanit';font-size:16px;text-align:left}
+.toolbtn:hover{filter:brightness(1.1)}
+
+/* thumbs */
+.thumbs{display:flex;gap:6px;overflow-x:auto;padding:8px 10px;background:#0f1914}
+.th{flex:0 0 auto;border:3px solid transparent;border-radius:6px;padding:0;background:none;position:relative}
+.th img{width:104px;height:58px;object-fit:cover;border-radius:3px;display:block}
+.th.on{border-color:#fff}
+.th i{position:absolute;left:0;right:0;bottom:0;height:4px}
+
+/* tool overlay */
+.ov{position:fixed;inset:0;background:rgba(10,20,15,.6);display:none;z-index:50}
+.ov.show{display:flex}
+.panel{margin:auto;width:min(1180px,96vw);height:min(760px,94vh);background:var(--paper);border-radius:18px;display:grid;grid-template-rows:auto 1fr;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.ph2{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#1f4d36;color:#fff;flex-wrap:wrap}
+.ph2 .tabs{display:flex;gap:4px;flex-wrap:wrap;flex:1}
+.tab{border:0;border-radius:8px;padding:7px 11px;font-family:'Kanit';font-size:14.5px;background:rgba(255,255,255,.14);color:#fff}
+.tab.on{background:#fff;color:#1f4d36}
+.x{border:0;background:#fff;color:#1f4d36;border-radius:8px;padding:7px 12px;font-family:'Kanit';font-size:15px}
+.body{overflow:auto;padding:18px 22px;position:relative}
+.tool{display:none}.tool.on{display:block}
+h2.tt{font-family:'Kanit';font-weight:600;font-size:26px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 14px;font-size:16px}
+.btn{border:0;border-radius:12px;padding:10px 16px;font-family:'Kanit';font-size:17px;background:var(--green);color:#fff}
+.btn.alt{background:#e8e3d2;color:var(--ink)}
+.btn.big{font-size:22px;padding:14px 24px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* timer */
+.tdisp{font-family:'Nunito';font-weight:900;font-size:min(26vw,220px);text-align:center;line-height:1;margin:20px 0;color:var(--green)}
+.tdisp.warn{color:var(--yellow)}.tdisp.end{color:var(--red);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.35}}
+.tbar{height:16px;background:#e8e3d2;border-radius:10px;overflow:hidden;margin:0 auto 20px;max-width:800px}
+.tbar i{display:block;height:100%;background:var(--green);transition:width .3s linear}
+
+/* picker */
+.pick{font-family:'Nunito';font-weight:900;font-size:min(22vw,200px);text-align:center;margin:10px 0;color:var(--explore)}
+.pick.small{font-family:'Kanit';font-size:min(9vw,80px);padding:40px 0}
+.picked{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.picked span{background:#e8e3d2;border-radius:20px;padding:3px 10px;font-family:'Nunito';font-weight:800}
+input[type=number],input[type=text],textarea,select{font-family:inherit;font-size:17px;padding:8px 10px;border:2px solid var(--line);border-radius:10px;background:#fff}
+
+/* real or dream */
+.card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:30px 24px;text-align:center;font-family:'Nunito';font-weight:800;font-size:min(4.4vw,40px);line-height:1.3;margin:10px auto 18px;max-width:980px;min-height:150px;display:flex;align-items:center;justify-content:center}
+.rd{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.rd button{border:0;border-radius:16px;padding:18px 28px;font-family:'Kanit';font-size:24px;color:#fff;min-width:260px}
+.real{background:var(--explore)}.dream{background:var(--elaborate)}
+.fb{text-align:center;font-size:20px;margin-top:16px;min-height:60px;line-height:1.5}
+.fb b.ok{color:var(--green)} .fb b.no{color:var(--red)}
+.hl1{color:#2f6fb3}.hl2{color:#b03a2e}
+
+/* detective */
+.det{display:grid;gap:12px}
+.dcase{background:#fff;border:2px solid var(--line);border-radius:14px;padding:14px 18px}
+.dcase .w{font-family:'Nunito';font-weight:800;font-size:26px}
+.dcase .w mark{background:#ffd6d6;color:#b02a2a;border-radius:4px;padding:0 3px;text-decoration:line-through}
+.dcase .w.plain mark{background:none;color:inherit;text-decoration:none;padding:0}
+.dcase .fix{display:none;margin-top:8px;font-size:19px;line-height:1.5}
+.dcase.open .fix{display:block}
+.dcase .fix .c{font-family:'Nunito';font-weight:800;font-size:24px;color:var(--green)}
+.dcase .fix .c u{text-decoration:none;background:#d9f2e0;border-radius:4px;padding:0 3px}
+
+/* puzzle */
+.prow{display:flex;align-items:center;gap:10px;background:var(--green2);border:2px solid #b7d9c2;border-radius:16px;padding:14px;margin-bottom:12px;flex-wrap:wrap;font-family:'Nunito';font-weight:800;font-size:28px}
+.prow .lab{font-family:'Kanit';font-size:20px;width:150px;line-height:1.1;color:var(--green)}
+.slot{min-width:210px;height:64px;border:3px dashed #8fb79d;border-radius:14px;display:flex;align-items:center;justify-content:center;background:#fff;font-size:22px;padding:0 10px}
+.slot.ok{border:3px solid var(--green);background:#e7f7ec}
+.slot.bad{border:3px solid var(--red);background:#ffecec;animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pieces{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:18px 0}
+.piece{border:0;border-radius:14px;padding:14px 22px;font-family:'Nunito';font-weight:800;font-size:24px;color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.18)}
+.piece.tense{background:#4f86b9}.piece.modal{background:#8a5cc0}
+.piece.sel{outline:4px solid var(--yellow);transform:translateY(-3px)}
+.piece.used{opacity:.25;pointer-events:none}
+
+/* checker */
+.chk textarea{width:100%;font-family:'Nunito';font-weight:700;font-size:26px;min-height:96px;resize:vertical}
+.gauge{position:relative;width:min(520px,90%);margin:6px auto 0}
+.gauge svg{width:100%;display:block}
+.verdict{text-align:center;font-family:'Kanit';font-size:26px;margin:4px 0}
+.issues{max-width:900px;margin:8px auto 0;font-size:19px;line-height:1.55}
+.issues div{padding:6px 10px;border-radius:8px;margin:5px 0}
+.issues .e{background:#ffecec}.issues .w2{background:#fff6dc}.issues .g{background:#e7f7ec}
+.typebadge{display:inline-block;border-radius:8px;padding:2px 10px;color:#fff;font-family:'Kanit';font-size:16px;margin-left:6px}
+
+/* tree */
+.treewrap{position:relative;width:100%;max-width:1000px;margin:0 auto;aspect-ratio:16/9;background:linear-gradient(#dff1fb,#f7fbef);border-radius:18px;overflow:hidden}
+.treewrap svg{position:absolute;inset:0;width:100%;height:100%}
+.note{position:absolute;width:62px;height:56px;padding:4px;font-size:8.5px;line-height:1.15;overflow:hidden;box-shadow:0 3px 6px rgba(0,0,0,.2);border-radius:3px;cursor:pointer;font-family:'Nunito';font-weight:700;transition:transform .2s}
+.note:hover{transform:scale(1.15) rotate(0deg)!important;z-index:5}
+.note.r{background:#ffc2d6}.note.s{background:#fff1a6}
+.zoom{position:absolute;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:9}
+.zoom.show{display:flex}
+.zoom div{max-width:80%;padding:30px 34px;font-family:'Nunito';font-weight:800;font-size:32px;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+
+/* score */
+.teams{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.team{border-radius:16px;padding:12px;color:#fff;text-align:center}
+.team input{width:100%;text-align:center;border:0;background:rgba(255,255,255,.22);color:#fff;font-family:'Kanit';font-size:18px;border-radius:8px}
+.team .s{font-family:'Nunito';font-weight:900;font-size:64px;line-height:1.1}
+.team button{border:0;border-radius:10px;width:46px;height:40px;font-size:22px;font-weight:800;background:rgba(255,255,255,.9);color:#333;margin:0 3px}
+
+/* ===== living slide layers ===== */
+.lays,.lfx{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.ly{position:absolute;opacity:0;animation:lin .8s cubic-bezier(.2,1.2,.4,1) var(--ed,0s) forwards}
+.ly.drop{animation-name:ldrop}.ly.slideL{animation-name:lslideL}.ly.slideR{animation-name:lslideR}.ly.rise{animation-name:lrise}
+@keyframes lin{0%{opacity:0;transform:scale(1.16)}60%{opacity:1}100%{opacity:1;transform:none}}
+@keyframes ldrop{0%{opacity:0;transform:translateY(-14cqh)}70%{opacity:1;transform:translateY(1cqh)}100%{opacity:1;transform:none}}
+@keyframes lslideL{0%{opacity:0;transform:translateX(-10cqw) rotate(-6deg)}100%{opacity:1;transform:none}}
+@keyframes lslideR{0%{opacity:0;transform:translateX(10cqw) rotate(6deg)}100%{opacity:1;transform:none}}
+@keyframes lrise{0%{opacity:0;transform:translateY(10cqh)}100%{opacity:1;transform:none}}
+.ly>i{position:absolute;inset:0;background-repeat:no-repeat;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent),linear-gradient(180deg,transparent,#000 7%,#000 93%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent),linear-gradient(180deg,transparent,#000 7%,#000 93%,transparent);mask-composite:intersect;animation:var(--la) var(--ld,3s) ease-in-out calc(var(--ed,0s) + .8s) infinite;transform-origin:var(--lo,50% 50%)}
+.ly.hard>i{-webkit-mask-image:none;mask-image:none}
+@keyframes sway{0%,100%{transform:rotate(-1.8deg)}50%{transform:rotate(1.8deg)}}
+@keyframes swayS{0%,100%{transform:rotate(-.6deg)}50%{transform:rotate(.6deg)}}
+@keyframes breath{0%,100%{transform:scale(1)}50%{transform:scale(1.018)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.4cqh)}}
+@keyframes pulse2{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+@keyframes wiggle{0%,60%,100%{transform:rotate(0)}68%{transform:rotate(-6deg)}76%{transform:rotate(6deg)}84%{transform:rotate(-4deg)}92%{transform:rotate(3deg)}}
+@keyframes bob2{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-1.6cqh) rotate(1.5deg)}}
+@keyframes beat{0%,40%,100%{transform:scale(1)}10%,30%{transform:scale(1.3)}20%{transform:scale(1.05)}}
+@keyframes bright{0%,100%{filter:brightness(1) saturate(1)}50%{filter:brightness(1.18) saturate(1.25)}}
+@keyframes grow{0%,100%{transform:scale(1) rotate(-1deg)}50%{transform:scale(1.05) rotate(1.2deg)}}
+@keyframes hop{0%,55%,100%{transform:translateY(0)}65%{transform:translateY(-2.4cqh)}75%{transform:translateY(0)}82%{transform:translateY(-1cqh)}90%{transform:translateY(0)}}
+@keyframes spinz{0%,100%{transform:rotate(-4deg) scale(1)}50%{transform:rotate(4deg) scale(1.05)}}
+/* effects */
+.e{position:absolute;pointer-events:none}
+.e.smoke{width:4cqw;height:4cqw;margin:-2cqw;border-radius:50%;background:radial-gradient(circle,rgba(120,120,120,.55),rgba(120,120,120,0) 70%);filter:blur(.3cqw);animation:smoke 5s ease-out var(--dl) infinite;opacity:0}
+@keyframes smoke{0%{opacity:0;transform:translate(0,0) scale(.5)}15%{opacity:.85}100%{opacity:0;transform:translate(var(--mx,2cqw),-16cqh) scale(2.4)}}
+.e.spk{font-size:var(--sz,2cqw);margin:-1cqw;color:#fff8c0;text-shadow:0 0 .8cqw #ffe36b,0 0 1.6cqw #fff;animation:twk var(--d,2.2s) ease-in-out var(--dl) infinite;opacity:0}
+@keyframes twk{0%,100%{opacity:0;transform:scale(.3) rotate(0)}50%{opacity:1;transform:scale(1) rotate(90deg)}}
+.e.fly{font-size:2.4cqw;animation:flypath var(--d,9s) ease-in-out var(--dl) infinite}
+.e.fly b{display:inline-block;animation:flap .35s ease-in-out infinite alternate;font-weight:400}
+@keyframes flap{to{transform:scaleX(.45)}}
+@keyframes flypath{0%,100%{transform:translate(0,0)}25%{transform:translate(4cqw,-5cqh)}50%{transform:translate(9cqw,1cqh)}75%{transform:translate(3cqw,5cqh)}}
+.e.bub{width:var(--sz,1.4cqw);height:var(--sz,1.4cqw);border-radius:50%;border:.15cqw solid rgba(255,255,255,.8);background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.9),rgba(160,220,255,.15) 60%);animation:bub var(--d,6s) ease-in var(--dl) infinite;opacity:0}
+@keyframes bub{0%{opacity:0;transform:translate(0,0)}10%{opacity:.9}100%{opacity:0;transform:translate(var(--mx,1cqw),-40cqh)}}
+.e.fall{width:1.3cqw;height:1.1cqw;border-radius:.15cqw;background:var(--c);top:-4%;animation:fall var(--d,7s) linear var(--dl) infinite;opacity:.9}
+@keyframes fall{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(var(--mx,3cqw),112cqh) rotate(540deg)}}
+.e.beam{width:2.4cqw;margin-left:-1.2cqw;top:0;bottom:0;background:linear-gradient(90deg,transparent,rgba(255,250,210,.9),transparent);filter:blur(.4cqw);animation:beam 2.6s ease-in-out infinite;mix-blend-mode:screen}
+@keyframes beam{0%,100%{opacity:.35;transform:scaleX(.7)}50%{opacity:1;transform:scaleX(1.4)}}
+.e.glint{overflow:hidden;border-radius:1cqw}
+.e.glint::after{content:'';position:absolute;top:-30%;bottom:-30%;width:30%;left:-40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);transform:skewX(-18deg);animation:glint var(--d,4s) ease-in-out var(--dl,0s) infinite;mix-blend-mode:soft-light}
+.e.glint.strong::after{mix-blend-mode:screen;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent)}
+@keyframes glint{0%{left:-40%}45%,100%{left:130%}}
+.e.halo{border-radius:50%;background:radial-gradient(circle,rgba(255,240,170,.75),rgba(255,240,170,0) 65%);mix-blend-mode:screen;animation:halo 2.8s ease-in-out var(--dl,0s) infinite}
+@keyframes halo{0%,100%{opacity:.25;transform:scale(.85)}50%{opacity:.95;transform:scale(1.12)}}
+.e.dots{height:.6cqw;background:repeating-linear-gradient(90deg,#fff 0 .6cqw,transparent .6cqw 1.6cqw);border-radius:1cqw;filter:drop-shadow(0 0 .5cqw #9ff);animation:dots 1s linear infinite;opacity:.9}
+@keyframes dots{from{background-position:0 0}to{background-position:-1.6cqw 0}}
+body.noanim .lays,body.noanim .lfx,body.noanim .fx{display:none}
+/* ===== Eco-Crisis Lifeline (poster style) ===== */
+.lf{margin:-6px -8px;background:radial-gradient(circle at 20% 10%,#1e78c8,#0b4f95 60%,#083d78);border-radius:18px;padding:14px 16px 12px;color:#fff;font-family:'Kanit';position:relative;overflow:hidden}
+.lf::before{content:'';position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,.18) 2px,transparent 3px) 0 0/46px 46px;opacity:.35;pointer-events:none}
+.lfhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:relative}
+.lftitle{flex:1;font-family:'Kanit';font-weight:700;font-size:30px;letter-spacing:.5px;color:#3fae3a;-webkit-text-stroke:7px #fff;paint-order:stroke fill;text-shadow:0 4px 0 rgba(0,0,0,.35)}
+.lftitle small{font-size:17px;color:#fff;text-shadow:none;font-weight:500;-webkit-text-stroke:0}
+.lfbtn{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:10px;padding:6px 12px;font-family:'Kanit';font-size:15px;text-decoration:none}
+.lfin{position:relative;margin-top:8px}
+.lfin textarea{width:100%;font-family:'Nunito';font-weight:700;font-size:24px;min-height:70px;resize:vertical;border:3px solid #9fd2ff;border-radius:14px;color:#123}
+.lfrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.lfgo{border:0;border-radius:12px;padding:9px 18px;font-family:'Kanit';font-size:19px;background:#ffd23f;color:#3d2c00;box-shadow:0 4px 0 #b48a00}
+.lfgo:active{transform:translateY(3px);box-shadow:0 1px 0 #b48a00}
+.lfs{opacity:.8;margin-left:6px}
+.lfex{border:0;border-radius:10px;padding:7px 11px;font-size:17px;background:rgba(255,255,255,.18);color:#fff;font-family:'Kanit'}
+.meter{position:relative;margin-top:12px;background:#fbf4e4;border-radius:22px;padding:10px 18px 14px;box-shadow:inset 0 0 0 4px #e9dcbd}
+.zl{display:grid;grid-template-columns:repeat(4,1fr);text-align:center;color:#333}
+.zl div{padding:2px 4px;border-right:2px dashed rgba(0,0,0,.18);transition:.3s}
+.zl div:last-child{border-right:0}
+.zl b{display:block;font-size:22px;font-weight:700;line-height:1.1}
+.zl span{font-size:14px}
+.zl [data-z="0"] b{color:#1f8a3b}.zl [data-z="1"] b{color:#8a5a00}.zl [data-z="2"] b{color:#d23a2a}.zl [data-z="3"] b{color:#1e1e1e}
+.zl div.on{transform:scale(1.08)}.zl div.on b{text-decoration:underline 3px}
+.track{position:relative;height:58px;margin:30px 0 22px;border-radius:30px;background:linear-gradient(90deg,#3fb35f 0%,#9fd04a 18%,#ffd84a 32%,#ffb13b 50%,#f06b2f 64%,#d8322c 76%,#4a1b1b 88%,#141414 100%);box-shadow:inset 0 4px 10px rgba(0,0,0,.35),0 0 0 4px #fff;touch-action:none;cursor:pointer}
+.ticks{position:absolute;inset:0;display:flex;justify-content:space-evenly;pointer-events:none}
+.ticks i{width:0;border-left:3px dashed rgba(255,255,255,.75)}
+.turtle{position:absolute;top:50%;width:92px;height:auto;transform:translate(-50%,-52%);left:12.5%;cursor:grab;filter:drop-shadow(0 6px 6px rgba(0,0,0,.35));transition:left .7s cubic-bezier(.3,1.4,.5,1);user-select:none;-webkit-user-drag:none;z-index:2}
+.turtle.drag{transition:none;cursor:grabbing}
+.turtle.bob{animation:bob 2.4s ease-in-out infinite}
+.turtle.shake{animation:tshake .5s ease-in-out 3}
+@keyframes bob{50%{transform:translate(-50%,-60%) rotate(-3deg)}}
+@keyframes tshake{25%{transform:translate(-56%,-52%) rotate(-7deg)}75%{transform:translate(-44%,-52%) rotate(7deg)}}
+.slidehint{text-align:center;color:#245;font-size:18px;line-height:1.1;margin-top:4px}
+.slidehint small{font-size:14px;color:#456}
+.slidehint.locked{font-size:22px;font-weight:600}
+.decbar{position:relative;margin:12px auto 10px;width:max-content;max-width:100%;background:#0d3463;border:3px solid #6fb7ff;border-radius:30px;padding:5px 22px;font-size:20px}
+.zones{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.zc{border-radius:16px;padding:8px 10px 10px;color:#2a2a2a;background:#fffaf0;box-shadow:0 0 0 4px var(--zb) inset;transition:.35s;display:flex;flex-direction:column}
+.zc h4{margin:0 0 4px;font-size:21px;color:var(--zt);font-weight:700;text-align:center}
+.zc .kb{align-self:center;background:var(--zt);color:#fff;border-radius:20px;padding:0 14px;font-size:16px}
+.zc .big{font-size:24px;font-weight:700;color:var(--zh);text-align:center;line-height:1.2;margin:4px 0}
+.zc .txt{font-size:15.5px;text-align:center;line-height:1.4;flex:1}
+.zc .txt b{color:#c0281b}
+.zc .pk{margin-top:6px;border:2px solid var(--zb);border-radius:12px;padding:4px 8px 6px;background:#fff}
+.zc .pk>div{text-align:center;font-size:13.5px;font-weight:600;color:var(--zt)}
+.cp{display:flex;gap:6px;align-items:flex-start;font-size:13.5px;line-height:1.3;padding:4px 4px;border-radius:8px;cursor:pointer;font-family:'Sarabun'}
+.cp .n{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--zt);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:'Kanit'}
+.cp.hit{background:#fff1c2;box-shadow:0 0 0 2px #e9b730;animation:hit 1.2s ease-in-out infinite}
+.cp.hit::after{content:'📍 พบ!';margin-left:auto;font-family:'Kanit';color:#b35a00;white-space:nowrap}
+@keyframes hit{50%{box-shadow:0 0 0 5px rgba(233,183,48,.45)}}
+.zones.has .zc{opacity:.38;filter:saturate(.5);transform:scale(.97)}
+.zones.has .zc.on{opacity:1;filter:none;transform:scale(1.03);box-shadow:0 0 0 5px var(--zb) inset,0 0 26px 4px var(--zg)}
+.zc.z0{--zb:#4caf50;--zt:#1f7a35;--zh:#1f7a35;--zg:rgba(120,230,120,.8)}
+.zc.z1{--zb:#f2b632;--zt:#a86c00;--zh:#d0281b;--zg:rgba(255,210,70,.85)}
+.zc.z2{--zb:#e9573f;--zt:#c9271b;--zh:#c9271b;--zg:rgba(255,110,80,.85)}
+.zc.z3{--zb:#222;--zt:#1b1b1b;--zh:#c9271b;--zg:rgba(255,255,255,.7);background:#f3efe6}
+.tdet{position:relative;margin-top:10px;background:rgba(255,255,255,.1);border-radius:12px;padding:6px 10px;font-family:'Sarabun';font-size:15px}
+.tdet summary{cursor:pointer;font-family:'Kanit'}
+.tdet .issues{color:#fff}
+.tdet .issues div{background:rgba(255,255,255,.12);border-radius:8px;padding:5px 8px;margin:5px 0}
+.lfhow{position:relative;margin-top:10px;background:#0d3463;border:2px solid #6fb7ff;border-radius:30px;padding:6px 16px;font-size:15.5px;text-align:center}
+.posterov{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:80;cursor:zoom-out}
+.posterov.show{display:flex}.posterov img{max-width:96vw;max-height:94vh;border-radius:12px}
+@media (max-width:900px){.zones{grid-template-columns:1fr 1fr}.lftitle{font-size:22px}.zl b{font-size:16px}.turtle{width:76px}}
+/* poster-based lifeline */
+.lftitle2{flex:1;font-family:'Kanit';font-size:16px}
+.cin{flex:1;min-width:260px;font-family:'Nunito'!important;font-weight:700;font-size:21px!important;border:3px solid #9fd2ff!important;border-radius:12px!important;color:#123}
+.lfin textarea{min-height:52px!important;font-size:22px!important}
+.pstage{position:relative;width:min(100%,calc((min(94vh,760px) - 225px)*1.471));min-width:300px;margin:10px auto 0;aspect-ratio:1774/1206;container-type:inline-size;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.35);user-select:none}
+.pimg{position:absolute;inset:0;width:100%;height:100%;display:block;-webkit-user-drag:none}
+.pdim{position:absolute;inset:0;pointer-events:none}
+.pdim .dz{position:absolute;background:rgba(5,20,45,.62);border-radius:1.4cqw;transition:opacity .45s}
+.pdim .gl{position:absolute;border-radius:1.6cqw;box-shadow:0 0 0 .45cqw #fff,0 0 2.4cqw 1cqw var(--g);animation:glw 1.6s ease-in-out infinite;transition:.45s}
+@keyframes glw{50%{box-shadow:0 0 0 .45cqw #fff,0 0 3.6cqw 1.8cqw var(--g)}}
+.pdim .hl{position:absolute;border-radius:1cqw;background:var(--g);mix-blend-mode:screen;opacity:.35;animation:halo 2s ease-in-out infinite}
+.ptrack{position:absolute;left:8.6%;width:85.6%;top:19.8%;height:8.4%;cursor:pointer;touch-action:none}
+.ptrack .turtle{position:absolute;top:50%;left:9.5%;width:8.6cqw;height:auto;transform:translate(-50%,-47%);transition:left .7s cubic-bezier(.3,1.4,.5,1);filter:drop-shadow(0 .5cqw .5cqw rgba(0,0,0,.45));z-index:3;cursor:grab}
+.ptrack .turtle.drag{transition:none;cursor:grabbing}
+.ptrack .turtle.bob{animation:pbob 2.4s ease-in-out infinite}
+.ptrack .turtle.shake{animation:pshake .5s ease-in-out 3}
+@keyframes pbob{0%,100%{transform:translate(-50%,-47%)}50%{transform:translate(-50%,-57%) rotate(-3deg)}}
+@keyframes pshake{0%,100%{transform:translate(-50%,-47%)}25%{transform:translate(-56%,-47%) rotate(-7deg)}75%{transform:translate(-44%,-47%) rotate(7deg)}}
+.plock{position:absolute;left:36.6%;width:26.8%;top:29.6%;height:6.6%;border-radius:3cqw;background:#fbf3e3;display:none;align-items:center;justify-content:center;font-family:'Kanit';font-weight:600;font-size:1.9cqw;color:#222;box-shadow:inset 0 0 0 .25cqw #e8d9b5;animation:lockin .6s cubic-bezier(.3,1.6,.5,1)}
+.plock.show{display:flex}
+@keyframes lockin{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+.pin{position:absolute;width:2.6cqw;height:2.6cqw;margin:-1.3cqw 0 0 -1.3cqw;border-radius:50%;cursor:pointer;z-index:4}
+.pin:hover{background:rgba(255,255,255,.35)}
+.pin.hit{background:radial-gradient(circle,#ffe14a 0 35%,rgba(255,225,74,0) 70%);animation:pinp 1.1s ease-in-out infinite}
+.pin.hit::after{content:'📍';position:absolute;left:-1.6cqw;top:-2.9cqw;font-size:2.6cqw;animation:pindrop .5s cubic-bezier(.3,1.6,.5,1)}
+
+@keyframes pinp{50%{box-shadow:0 0 0 1.2cqw rgba(255,225,74,.35)}}
+@keyframes pindrop{from{transform:translateY(-3cqw);opacity:0}to{transform:none;opacity:1}}
+/* media */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.mhead{color:#fff;font-family:'Kanit';font-size:18px;padding:8px 12px;border-radius:12px 12px 0 0}
+.mi{display:flex;gap:10px;align-items:flex-start;background:#fff;border:2px solid var(--line);border-top:0;padding:10px 12px}
+.mi:last-child{border-radius:0 0 12px 12px}
+.mi input{width:22px;height:22px;margin-top:3px;accent-color:var(--green);flex:0 0 auto}
+.mi .mt{font-family:'Kanit';font-size:17px;line-height:1.25}
+.mi .md{font-size:14.5px;color:var(--muted);line-height:1.45;margin-top:2px}
+.mi .pt{display:inline-block;color:#fff;border-radius:5px;padding:0 6px;font-size:12px;font-family:'Kanit';margin-right:3px}
+.mi a.open{display:inline-block;margin-top:6px;background:var(--explore);color:#fff;text-decoration:none;border-radius:8px;padding:5px 12px;font-family:'Kanit';font-size:15px}
+.mi.done .mt{text-decoration:line-through;opacity:.6}
+@media (max-width:800px){.mgrid{grid-template-columns:1fr}}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:99}
+
+@media (max-width:900px){
+  .main{grid-template-columns:1fr;grid-template-rows:55vh 1fr}
+  .main.nonotes{grid-template-rows:1fr 0}
+  .notes{border-left:0;border-top:1px solid var(--line)}
+  body{overflow:auto}
+  .app{height:auto;min-height:100vh}
+  .phases{order:3;flex-basis:100%}
+}
+:fullscreen .notes{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="brand">🌍 Eco-Heroes <small>M.3 · First &amp; Second Conditionals · 50 นาที</small></div>
+    <div class="phases" id="phases"></div>
+    <div class="clock" title="เวลาคาบเรียน">
+      <span>⏱</span><span class="t" id="lt">00:00</span>
+      <button class="ibtn" id="ltBtn">เริ่มคาบ</button>
+      <button class="ibtn" id="ltReset" title="รีเซ็ต">↺</button>
+    </div>
+    <button class="ibtn" id="notesBtn">📝 บทสอน</button>
+    <button class="ibtn" id="toolsBtn">🧰 เครื่องมือ</button>
+    <button class="ibtn on" id="animBtn" title="เปิด/ปิดแอนิเมชันบนสไลด์">🎬 แอนิเมชัน</button>
+    <button class="ibtn" id="fsBtn">⛶ เต็มจอ</button>
+  </div>
+
+  <div class="main" id="main">
+    <div class="stage" id="stage">
+      <div class="frame" id="frame"><div class="inner" id="inner"><img id="slideImg" alt="slide"><div class="lays" id="lays"></div><div class="lfx" id="lfx"></div><div class="fx" id="fx"></div><div class="ovl" id="ovl"></div></div></div>
+      <button class="nav l" id="prev" aria-label="ก่อนหน้า">‹</button>
+      <button class="nav r" id="next" aria-label="ถัดไป">›</button>
+      <div class="counter" id="counter"></div>
+      <div class="quick" id="quick"></div>
+    </div>
+    <aside class="notes" id="notes"></aside>
+  </div>
+
+  <div class="thumbs" id="thumbs"></div>
+</div>
+
+<!-- TOOLS -->
+<div class="ov" id="ov">
+  <div class="panel">
+    <div class="ph2">
+      <div class="tabs" id="tabs"></div>
+      <button class="x" id="closeOv">✕ กลับสไลด์</button>
+    </div>
+    <div class="body">
+
+      <!-- Timer -->
+      <section class="tool" id="t-timer">
+        <h2 class="tt">⏲️ Activity Timer</h2>
+        <p class="sub">จับเวลากิจกรรม (Think 1′ · Pair 2′ · Share 2′ ฯลฯ) มีเสียงเตือนเมื่อหมดเวลา</p>
+        <div class="row" id="tPresets"></div>
+        <div class="tdisp" id="tDisp">02:00</div>
+        <div class="tbar"><i id="tBar" style="width:100%"></i></div>
+        <div class="row" style="justify-content:center">
+          <button class="btn big" id="tStart">▶ Start</button>
+          <button class="btn big alt" id="tReset">↺ Reset</button>
+          <button class="btn alt" id="tMinus">−30s</button>
+          <button class="btn alt" id="tPlus">+30s</button>
+        </div>
+      </section>
+
+      <!-- Picker -->
+      <section class="tool" id="t-picker">
+        <h2 class="tt">🎯 Random Hero Picker</h2>
+        <p class="sub">สุ่มเลขที่นักเรียนหรือกลุ่มที่จะตอบ (คนที่ถูกเลือกแล้วจะไม่ถูกสุ่มซ้ำจนกว่าจะรีเซ็ต)</p>
+        <div class="row">
+          <select id="pMode"><option value="num">เลขที่นักเรียน</option><option value="team">กลุ่ม (จากหน้า Scoreboard)</option></select>
+          <label>จำนวนนักเรียน <input type="number" id="pN" value="40" min="2" max="60" style="width:90px"></label>
+          <button class="btn alt" id="pReset">↺ เริ่มใหม่</button>
+        </div>
+        <div class="pick" id="pDisp">?</div>
+        <div class="row" style="justify-content:center"><button class="btn big" id="pGo">🎲 สุ่ม!</button></div>
+        <div class="picked" id="pList"></div>
+      </section>
+
+      <!-- Real or Dream -->
+      <section class="tool" id="t-world">
+        <h2 class="tt">🌏 Real World or Dream World?</h2>
+        <p class="sub">ขั้น Explore: ให้ทั้งห้องโหวต แล้วกดคำตอบที่ห้องเลือก ระบบเฉลยพร้อมเหตุผล</p>
+        <div class="row"><span id="wCount" style="font-family:Kanit;font-size:18px"></span><span style="flex:1"></span><span id="wScore" style="font-family:Kanit;font-size:18px"></span></div>
+        <div class="card" id="wCard"></div>
+        <div class="rd">
+          <button class="real" data-a="real">🏙️ Real World<br><small style="font-size:16px">เป็นไปได้จริง (Type 1)</small></button>
+          <button class="dream" data-a="dream">✨ Dream World<br><small style="font-size:16px">สมมติ/จินตนาการ (Type 2)</small></button>
+        </div>
+        <div class="fb" id="wFb"></div>
+        <div class="row" style="justify-content:center"><button class="btn" id="wNext">ข้อต่อไป →</button></div>
+      </section>
+
+      <!-- Detective -->
+      <section class="tool" id="t-detect">
+        <h2 class="tt">🚨 Grammar Detective</h2>
+        <p class="sub">Step 4: ให้กลุ่มหาจุดผิด → กด “🔍 ชี้จุดผิด” → กด “✅ เฉลย” เพื่อดูประโยคที่ถูกและเหตุผล</p>
+        <div class="det" id="detList"></div>
+      </section>
+
+      <!-- Puzzle -->
+      <section class="tool" id="t-puzzle">
+        <h2 class="tt">🧩 Build the Rule</h2>
+        <p class="sub">Step 5: แตะชิ้นจิ๊กซอว์ แล้วแตะช่องที่ต้องการวาง · ให้ตัวแทนกลุ่มออกมาวางบนจอ</p>
+        <div class="prow"><div class="lab">🌱 First<br>Conditional</div>If + <div class="slot" data-k="f1"></div>,<div class="slot" data-k="f2"></div>+ V1</div>
+        <div class="prow" style="background:#efe6fa;border-color:#d3c0ec"><div class="lab" style="color:var(--elaborate)">✨ Second<br>Conditional</div>If + <div class="slot" data-k="s1"></div>,<div class="slot" data-k="s2"></div>+ V1</div>
+        <div class="pieces" id="pieces"></div>
+        <div class="fb" id="pzFb"></div>
+        <div class="row" style="justify-content:center"><button class="btn alt" id="pzReset">↺ เริ่มใหม่</button></div>
+      </section>
+
+      <!-- Checker -->
+      <section class="tool" id="t-check">
+        <div class="lf">
+          <div class="lfhead">
+            <div class="lftitle2">🐢 Commander Check — พิมพ์ประโยคของกลุ่ม แล้วกดตรวจ หรือลากเต่าบนโปสเตอร์เพื่อล็อกระดับ</div>
+            <button class="lfbtn" id="lfPoster">🖼️ โปสเตอร์</button>
+            <a class="lfbtn" href="https://pratchayapiw.github.io/THE-ECO-CRISIS-LIFELINE/" target="_blank" rel="noopener">🌐 เว็บแอปเดิม ↗</a>
+          </div>
+          <div class="lfin">
+            <div class="lfrow"><input id="cIn" class="cin" autocomplete="off" placeholder="พิมพ์ประโยคของกลุ่ม เช่น If we plant more trees, the air will be cleaner.">
+              <button class="lfgo" id="cGo">🔎 ตรวจประโยค</button>
+              <span class="lfs">ตัวอย่าง:</span>
+              <button class="lfex" data-ex="If I were a Green Hero, I would stop plastic waste.">🛡️</button>
+              <button class="lfex" data-ex="If she save water, she will helps the Earth.">⚠️</button>
+              <button class="lfex" data-ex="If we will plant more trees, the air will be cleaner.">🚨</button>
+              <button class="lfex" data-ex="If we recycle more we will reduce pollution.">☠️</button>
+              <button class="lfex" id="cClr">ล้าง</button>
+            </div>
+          </div>
+          <div class="pstage" id="pstage">
+            <img src="img/lifeline-poster.jpg" class="pimg" alt="THE ECO-CRISIS LIFELINE poster" draggable="false">
+            <div class="pdim" id="pdim"></div>
+            <div class="ptrack" id="track"><img src="img/turtle.png" id="turtle" class="turtle" alt="turtle" draggable="false"></div>
+            <div class="plock" id="lfLock"></div>
+            <div id="ppins"></div>
+          </div>
+          <details class="tdet"><summary>👩‍🏫 รายละเอียดจุดผิดที่ระบบพบ (สำหรับครู — ไม่เฉลยให้นักเรียน)</summary><div id="cIss" class="issues"></div></details>
+        </div>
+        <div class="posterov" id="posterOv"><img src="img/lifeline-poster.jpg" alt="Eco-Crisis Lifeline poster"></div>
+      </section>
+
+      <!-- Tree -->
+      <section class="tool" id="t-tree">
+        <h2 class="tt">🌳 The Tree of Hope (Exit Ticket)</h2>
+        <p class="sub">ชมพู = กฎไวยากรณ์ที่ค้นพบ (3 ข้อ) · เหลือง = ประโยค Conditional ของฉัน (2 ประโยค) · ยิ่งโน้ตเยอะ ต้นไม้ยิ่งเขียว · แตะโน้ตเพื่อขยายอ่านหน้าชั้น</p>
+        <div class="row" style="margin-bottom:10px">
+          <select id="trType"><option value="r">🩷 Grammar rule</option><option value="s">💛 My sentence</option></select>
+          <input type="text" id="trTxt" style="flex:1;min-width:240px" placeholder="เช่น Never use will after if / If I were a hero, I would ...">
+          <button class="btn" id="trAdd">➕ แปะบนต้นไม้</button>
+          <button class="btn alt" id="trClear">ล้างต้นไม้</button>
+          <span id="trCount" style="font-family:Kanit"></span>
+        </div>
+        <div class="treewrap" id="tree">
+          <svg viewBox="0 0 1000 562" id="treeSvg"></svg>
+          <div class="zoom" id="zoom"><div id="zoomTxt"></div></div>
+        </div>
+      </section>
+
+      <!-- Media -->
+      <section class="tool" id="t-media">
+        <h2 class="tt">📦 สื่อการสอนของคาบนี้</h2>
+        <p class="sub">สื่อที่ครูทำไว้ล่าสุด ทั้งแบบทำมือและออนไลน์ · ติ๊ก ✓ ตอนเตรียมของก่อนเข้าห้อง (ระบบจำไว้ในเครื่องนี้)</p>
+        <div class="mgrid">
+          <div>
+            <div class="mhead" style="background:#8a5a2b">✋ สื่อทำมือ (Hands-on)</div>
+            <div id="mHand"></div>
+          </div>
+          <div>
+            <div class="mhead" style="background:#2f6fb3">💻 สื่อออนไลน์ (Online)</div>
+            <div id="mOnline"></div>
+          </div>
+        </div>
+        <div class="row" style="margin-top:12px"><span id="mProg" style="font-family:Kanit;font-size:17px"></span><span style="flex:1"></span><button class="btn alt" id="mReset">ล้างเครื่องหมาย ✓</button></div>
+      </section>
+
+      <!-- Score -->
+      <section class="tool" id="t-score">
+        <h2 class="tt">🏆 Green Team Scoreboard</h2>
+        <p class="sub">ให้คะแนนกลุ่มตลอดคาบ (ตอบถูก · ช่วยเพื่อน · พาเต่าเข้า Safe Zone) · แก้ชื่อกลุ่มได้</p>
+        <div class="row" style="margin-bottom:12px">
+          <label>จำนวนกลุ่ม <input type="number" id="sN" value="6" min="2" max="10" style="width:80px"></label>
+          <button class="btn alt" id="sReset">รีเซ็ตคะแนน</button>
+        </div>
+        <div class="teams" id="teams"></div>
+      </section>
+
+    </div>
+  </div>
+</div>
+<canvas class="confetti" id="conf"></canvas>
+
+<script>
+/* ============ DATA ============ */
+const PH = {
+  engage:{name:'Engage',th:'สร้างความสนใจ',min:5,c:'var(--engage)'},
+  explore:{name:'Explore',th:'สำรวจค้นหา',min:7,c:'var(--explore)'},
+  explain:{name:'Explain',th:'อธิบาย/ค้นพบกฎ',min:19,c:'var(--explain)'},
+  elaborate:{name:'Elaborate',th:'ขยายความรู้',min:11,c:'var(--elaborate)'},
+  evaluate:{name:'Evaluate',th:'ประเมินผล',min:8,c:'var(--evaluate)'}
+};
+const PH_ORDER=['engage','explore','explain','elaborate','evaluate'];
+
+const S = [
+ {img:'s01',ph:'engage',min:1,title:'ECO-HEROES: Save the World with Conditionals',
+  goal:'ทักทาย แจ้งภารกิจและจุดประสงค์การเรียนรู้',
+  say:['Good morning, Eco-Heroes! 🌍','Today you have a special mission: <i>save the world with Conditionals.</i>'],
+  do:['บอกจุดประสงค์: นักเรียนบอกความต่างและใช้ First / Second Conditional เขียนประโยคเรื่องสิ่งแวดล้อมได้','แบ่งกลุ่ม 4–5 คน (ใช้ Scoreboard บันทึกคะแนนกลุ่มทั้งคาบ)','ก่อนเริ่มคาบ: เปิด 📦 สื่อการสอน แล้วติ๊กเช็กของให้ครบ'],
+  tools:['media','score']},
+ {img:'s02',ph:'engage',min:2,title:'Look at our world. How do you feel?',
+  goal:'กระตุ้นอารมณ์ร่วมต่อปัญหาสิ่งแวดล้อม',
+  say:['Look at these pictures. What do you see?','How do you feel? Sad? Angry? Ready to change it?'],
+  do:['สุ่มนักเรียน 3–4 คนตอบด้วยคำเดียวหรือวลีสั้น ๆ'],
+  ans:'trash / pollution / drought — sad, angry, worried, ready',
+  tools:['picker']},
+ {img:'s03',ph:'engage',min:2,title:'The Magic Wand',
+  goal:'ให้นักเรียนพูดประโยคสมมติโดยยังไม่สอนกฎ (เก็บไว้เชื่อมตอน Explain)',
+  say:['If you had a magic wand right now, what would you change?','Start with: <i>“I would …”</i>'],
+  do:['รับทุกคำตอบ ไม่แก้ไวยากรณ์ตอนนี้','จดคำตอบดี ๆ 1–2 ประโยคไว้บนกระดาน แล้วย้อนกลับมาใช้ใน Step 3'],
+  ans:'I would make all trash disappear. / I would change dirty smoke into fresh air.',
+  tools:['picker']},
+ {img:'s04',ph:'explore',min:2,title:'Welcome to the Parallel Worlds',
+  goal:'สร้างแนวคิด Real (เป็นไปได้จริง) vs Dream (สมมติ)',
+  say:['There are two worlds.','REAL WORLD: things that can actually happen.','DREAM WORLD: things we can only imagine.'],
+  do:['ถามเร็ว ๆ: <i>Can we stop using plastic bags?</i> (Real) · <i>Can we fly to the sun?</i> (Dream)'],
+  tools:['world']},
+ {img:'s05',ph:'explore',min:5,title:'World 1 vs World 2',
+  goal:'ให้นักเรียนสังเกตประโยคตัวอย่างของแต่ละโลก (สูตรและคำอธิบายซ่อนไว้ กดเฉลยทีละโลก)',
+  say:['Read both posts with me.','Which one can really happen? Which one is a dream?','Is this boy a billionaire now? — No! So it is a dream.','Look at the verbs. What is different?'],
+  do:['ให้คู่ (Pair) ชี้คำกริยาที่ต่างกัน: have / will ↔ were / would แล้วจึงกดเฉลยสูตร','เล่น Real or Dream? 3–4 ข้อ ให้ทั้งห้องโหวตด้วยมือ'],
+  ans:'World 1 = possible future (have, will) · World 2 = imaginary (were, would)',
+  tools:['world','score']},
+ {img:'s08',ph:'explain',min:1,title:'Green Hero Discovery',
+  goal:'เริ่มภารกิจค้นพบกฎไวยากรณ์ด้วยตนเอง (Guided Discovery)',
+  say:['Before you become a real Green Hero, you must discover the grammar secret by yourselves!'],
+  do:['อ่านข้อความภารกิจภาษาไทยบนสไลด์ร่วมกัน','ครูไม่บอกกฎ ใช้คำถามนำเท่านั้น'],
+  tools:[]},
+ {img:'s09',ph:'explain',min:2,title:'Step 1: Look & Notice',
+  goal:'สังเกตส่วนประกอบของประโยค',
+  say:['What word starts both sentences?','How many parts are there in each?','Which part is the condition? Which is the result?'],
+  ans:'“If” · 2 parts + comma · กล่องฟ้า = condition (if-clause) · กล่องส้ม = result (main clause)',
+  tools:['picker']},
+ {img:'s10',ph:'explain',min:2,title:'Step 2: Compare the Verb Forms',
+  goal:'เปรียบเทียบรูปกริยาในสองประโยค',
+  say:['What verb comes after <i>if</i>? Are they the same?','What helping verb is used in the result?','What is the core difference?'],
+  ans:'recycle (Present) ↔ were (Past) · will ↔ would · ซ้าย = จริง / ขวา = สมมติ',
+  tools:['picker']},
+ {img:'s11',ph:'explain',min:2,title:'Step 3: Discover the Meaning',
+  goal:'เชื่อมรูปประโยคกับความหมาย',
+  say:['Can it really happen? Show me: 1 finger = YES, 2 fingers = NO.','Which sentence is a real future possibility? Which is an imaginary dream?'],
+  do:['ย้อนกลับไปที่ประโยค Magic Wand ของนักเรียน: “Your sentences were Dream World sentences!”'],
+  ans:'ซ้าย YES (Real future) · ขวา NO (Imaginary dream)',
+  tools:[]},
+ {img:'s12',ph:'explain',min:3,title:'Step 4: Grammar Detective',
+  goal:'วิเคราะห์ข้อผิดพลาดที่พบบ่อย',
+  say:['What is wrong? Why doesn’t it work? Can you fix it?'],
+  do:['ให้กลุ่มคุยกัน 1 นาที แล้วสุ่มกลุ่มตอบ · ให้คะแนนกลุ่มที่แก้ถูก'],
+  ans:'If we <b>recycle</b>… · If I <b>were</b> a hero… · If everyone <b>recycles</b>…',
+  tools:['detect','timer','score']},
+ {img:'s13',ph:'explain',min:2,title:'Step 5: Build the Rule',
+  goal:'นักเรียนสร้างโครงสร้างไวยากรณ์ด้วยตนเอง',
+  say:['Which piece fits where? Which one uses <i>will</i>? Which uses <i>would</i>?'],
+  do:['เรียกตัวแทนกลุ่มออกมาวางจิ๊กซอว์บนจอ'],
+  ans:'First = If + Present Simple, will + V1 · Second = If + Past Simple, would + V1',
+  tools:['puzzle']},
+ {img:'s14',ph:'explain',min:2,title:'Step 5: First Conditional',
+  goal:'ยืนยันกฎ Type 1 — เหตุการณ์ที่มีโอกาสเกิดขึ้นจริงในอนาคต',
+  say:['If we plant trees, the air will be clean.','Now you: give me one more First Conditional sentence!'],
+  ans:'If + S + V.1 (Present Simple), S + will + V.1',
+  tools:['picker']},
+ {img:'s15',ph:'explain',min:2,title:'Step 5: Second Conditional',
+  goal:'ยืนยันกฎ Type 2 — สมมติ/จินตนาการ',
+  say:['If I had magic, I would clean the ocean.','Tip: we use <b>were</b> with every subject — If I were…, If she were…'],
+  ans:'If + S + V.2 (Past Simple), S + would + V.1',
+  tools:['picker']},
+ {img:'s16',ph:'explain',min:1,title:'Green Hero Grammar Guide',
+  goal:'สรุปกฎและข้อห้าม',
+  say:['Say it with me: <b>Never use will after if! Never use would after if!</b>'],
+  tools:[]},
+ {img:'s17',ph:'explain',min:1,title:'Hero’s Memory Map',
+  goal:'สรุปเปรียบเทียบ Meaning · If-clause · Result',
+  say:['Copy the Memory Map into your notebook.'],
+  do:['เช็กความเข้าใจเร็ว ๆ: ครูพูดประโยค ให้นักเรียนชู 1 นิ้ว (Type 1) หรือ 2 นิ้ว (Type 2)'],
+  tools:['world']},
+ {img:'s19',ph:'explain',min:1,title:'Mission Complete — Discovery',
+  goal:'ชื่นชมและทบทวนกระบวนการ Observe → Compare → Discover → Analyze → Build',
+  say:['Congratulations! You discovered the secret grammar by yourselves.','You are now ready for the Green Hero Cases!'],
+  tools:['score']},
+ {img:'s18',ph:'elaborate',min:5,title:'Green Hero Challenge (Think–Pair–Share)',
+  goal:'นำกฎไปแต่งประโยคของตนเอง',
+  say:['Think alone for 1 minute.','Pair up and compare for 2 minutes.','Share with the class!'],
+  do:['จับเวลา Think 1′ → Pair 2′ → Share 2′','สุ่มคู่ออกมาแชร์ แล้วตรวจด้วย Sentence Checker ให้ทั้งห้องดู'],
+  ans:'If we plant more trees, the air will be cleaner. · If I were a Green Hero, I would stop plastic waste.',
+  tools:['timer','picker','check']},
+ {img:'s07b',ph:'elaborate',min:6,title:'The Eco-Crisis Lifeline',
+  goal:'ฝึกเขียนประโยคเป็นกลุ่ม + ตรวจแก้ (Commander checks)',
+  say:['Your Commander will check your sentences!','Look at the clue for your zone. Fix the errors to bring the Turtle back to the SAFE ZONE!'],
+  do:['แต่ละกลุ่มเขียนประโยค Type 1 + Type 2 เรื่องสิ่งแวดล้อม อย่างน้อย 2 ประโยค','ครูตรวจประโยคด้วย 🐢 Eco-Crisis Lifeline แล้วเลื่อนเต่าล็อกระดับ SAFE / WARNING / CRITICAL / CRISIS — นักเรียนดูคำใบ้และพิกัดการตรวจ 7 จุด แล้วแก้เอง (ครูไม่บอกคำตอบ)','กลุ่มที่เต่าเข้า SAFE ZONE ได้รับคะแนน','ถ้าเวลาพอ/คาบต่อเนื่อง: เล่น Eco Hero Sentence Race หรือบอร์ดเกม Eco Hero Planet Rescue (ดู 📦 สื่อการสอน)'],
+  tools:['check','media','score','timer']},
+ {img:'s23',ph:'evaluate',min:6,title:'The Tree of Hope (Exit Ticket)',
+  goal:'ประเมินรายบุคคล: กฎ 3 ข้อ + ประโยค 2 ประโยค',
+  say:['On the pink note, write 3 grammar rules you discovered.','On the yellow note, write 2 conditional sentences — Type 1 or 2.','Then stick them on the Tree of Hope!'],
+  do:['เก็บโพสต์อิทเป็นหลักฐานการประเมิน (ใช้เกณฑ์ของแผน)','พิมพ์ตัวอย่างบางใบลงต้นไม้ดิจิทัลเพื่ออ่านหน้าชั้น'],
+  tools:['tree','timer']},
+ {img:'s24',ph:'evaluate',min:2,title:'You are the heroes of our world',
+  goal:'ปิดบทเรียน สะท้อนคิด',
+  say:['Look at our Tree of Hope — it is full of hope now!','Remember: small actions today, a better world tomorrow.','You are the heroes of our world!'],
+  do:['อ่านโน้ต 2–3 ใบ ชื่นชมกลุ่มคะแนนสูงสุด','มอบหมาย/แจ้งบทเรียนต่อไป'],
+  tools:['tree','score']}
+];
+
+const R=(x1,y1,x2,y2)=>({l:x1/11.7,t:(y1-86)/6.55,w:(x2-x1)/11.7,h:(y2-y1)/6.55});
+const G='#2f7d4f',B='#2f6fb3',P='#7b4bb5',O='#e07a2e',RD='#d64545';
+const BUILDS={
+ s05:[[{c:'cover',r:R(176,544,464,592),t:'สูตร World 1'},{c:'cover',r:R(120,658,502,710),t:'ความหมาย?'}],
+      [{c:'cover',r:R(708,544,1002,592),t:'สูตร World 2'},{c:'cover',r:R(668,658,1048,710),t:'ความหมาย?'}]],
+ s09:[[{c:'ring',r:R(222,330,276,390),col:'#e9b730'},{c:'ring',r:R(224,480,278,540),col:'#e9b730'},{c:'tag',r:R(55,555,215,592),t:'Both start with IF!',col:O}],
+      [{c:'ring',r:R(538,325,575,395),col:RD},{c:'ring',r:R(572,475,610,545),col:RD},{c:'tag',r:R(975,562,1150,598),t:'2 parts + comma ( , )',col:RD}],
+      [{c:'tag',r:R(250,566,505,602),t:'🌱 CONDITION (if-clause)',col:B},{c:'tag',r:R(655,566,940,602),t:'🌍 RESULT (main clause)',col:O}]],
+ s10:[[{c:'tag',r:R(270,300,490,335),t:'recycle = Present Simple',col:B},{c:'tag',r:R(700,300,920,335),t:'were = Past Simple',col:P}],
+      [{c:'tag',r:R(290,492,470,527),t:'will + V1',col:B},{c:'tag',r:R(720,492,900,527),t:'would + V1',col:P}],
+      [{c:'tag',r:R(300,232,460,268),t:'🌱 REAL',col:G},{c:'tag',r:R(705,232,905,268),t:'✨ IMAGINARY',col:P}]],
+ s11:[[{c:'ring',r:R(196,572,306,638),col:G},{c:'tag',r:R(18,585,192,625),t:'✓ Real future',col:G}],
+      [{c:'ring',r:R(868,572,966,638),col:P},{c:'tag',r:R(972,585,1152,625),t:'✨ Imaginary',col:P}]],
+ s12:[[{c:'ribbon',r:R(58,398,700,454),t:'✔ If we <u>recycle</u>, we will reduce waste.'}],
+      [{c:'ribbon',r:R(58,493,730,549),t:'✔ If I <u>were</u> a hero, I would protect forests.'}],
+      [{c:'ribbon',r:R(58,588,760,644),t:'✔ If everyone <u>recycles</u>, the Earth will be cleaner.'}]],
+ s13:[[{c:'chip',r:R(447,277,626,355),t:'Present Simple',col:'#4f86b9',from:R(240,545,370,615)}],
+      [{c:'chip',r:R(670,277,856,355),t:'will',col:'#8a5cc0',from:R(630,545,750,610)}],
+      [{c:'chip',r:R(447,407,626,486),t:'Past Simple',col:'#4f86b9',from:R(430,545,560,615)}],
+      [{c:'chip',r:R(670,407,856,486),t:'would',col:'#8a5cc0',from:R(815,545,935,610)}]],
+ s14:[[{c:'cover',r:R(210,338,598,532),t:'If Clause = ?'}],[{c:'cover',r:R(616,338,968,532),t:'Main Clause = ?'}],[{c:'cover',r:R(203,630,978,724),t:'ตัวอย่างประโยค'}]],
+ s15:[[{c:'cover',r:R(210,338,598,532),t:'If Clause = ?',cl:'purple'}],[{c:'cover',r:R(618,338,970,532),t:'Main Clause = ?',cl:'purple'}],[{c:'cover',r:R(183,571,982,660),t:'ตัวอย่างประโยค',cl:'purple'}]],
+ s16:[[{c:'cover',r:R(80,390,545,530),t:'First = ?'}],[{c:'cover',r:R(625,390,1090,530),t:'Second = ?'}],[{c:'cover',r:R(83,586,1087,694),t:'กฎเหล็ก 2 ข้อ'}]],
+ s17:[[{c:'cover',r:R(258,322,515,398),t:''},{c:'cover',r:R(672,322,1050,398),t:''}],
+      [{c:'cover',r:R(258,402,515,480),t:''},{c:'cover',r:R(672,402,1050,480),t:''}],
+      [{c:'cover',r:R(258,485,515,562),t:''},{c:'cover',r:R(672,485,1050,562),t:''}],
+      [{c:'cover',r:R(130,590,580,650),t:'ตัวอย่าง'},{c:'cover',r:R(596,590,1045,650),t:'ตัวอย่าง'}]],
+ s18:[[{c:'hand',r:R(140,312,520,358),t:'the air will be cleaner.'}],[{c:'hand',r:R(645,312,1065,358),t:'I would stop plastic waste.'}]]
+};
+const PT=(x,y)=>({x:x/11.7,y:(y-86)/6.55});
+// living layers: r = region, a = loop anim, e = entrance, ed = entrance delay, ld = loop duration, o = transform-origin
+const LAYERS={
+ s01:[{r:R(180,135,990,268),a:'breath',e:'drop',ed:.1,ld:4},{r:R(110,268,1060,335),a:'',e:'lin',ed:.6},{r:R(380,415,690,705),a:'bob2',e:'rise',ed:1,ld:3.2}],
+ s02:[{r:R(85,145,1085,232),a:'',e:'drop',ed:0},{r:R(42,255,338,580),a:'sway',e:'slideL',ed:.4,ld:4.2,o:'50% 0%'},{r:R(298,318,612,672),a:'sway',e:'rise',ed:.7,ld:5,o:'50% 0%'},{r:R(552,256,852,624),a:'sway',e:'slideR',ed:1,ld:4.6,o:'50% 0%'},
+      {r:R(890,286,1035,350),a:'wiggle',e:'lin',ed:1.6,ld:3.4},{r:R(900,380,1065,455),a:'wiggle',e:'lin',ed:2,ld:3.4},{r:R(880,480,1125,605),a:'breath',e:'lin',ed:2.4,ld:2}],
+ s03:[{r:R(235,130,935,230),a:'',e:'drop',ed:0},{r:R(505,215,780,650),a:'spinz',e:'lin',ed:.3,ld:3},{r:R(60,295,415,525),a:'float',e:'slideL',ed:.9,ld:3.6},{r:R(795,295,1120,525),a:'float',e:'slideR',ed:1.3,ld:4},{r:R(185,575,1030,705),a:'breath',e:'rise',ed:1.8,ld:2.6}],
+ s04:[{r:R(105,110,1065,185),a:'',e:'drop',ed:0},{r:R(165,225,420,295),a:'breath',e:'slideL',ed:.5,ld:3},{r:R(740,225,1015,295),a:'breath',e:'slideR',ed:.8,ld:3},{r:R(615,270,820,470),a:'float',e:'lin',ed:1.1,ld:4.5},{r:R(130,300,460,395),a:'',e:'rise',ed:1.3},{r:R(730,300,1025,395),a:'',e:'rise',ed:1.6}],
+ s05:[{r:R(122,160,500,655),a:'',e:'slideL',ed:.2},{r:R(668,160,1048,655),a:'',e:'slideR',ed:.7},{r:R(140,605,170,640),a:'beat',e:'lin',ed:1.5,ld:2.4,c:'hard'},{r:R(687,605,717,640),a:'beat',e:'lin',ed:1.8,ld:2.4,c:'hard'}],
+ s07b:[],
+ s08:[{r:R(165,130,1005,250),a:'',e:'drop',ed:0},{r:R(330,265,840,605),a:'float',e:'lin',ed:.4,ld:5},{r:R(515,355,655,505),a:'pulse2',e:'lin',ed:.9,ld:1.8},{r:R(222,592,948,705),a:'',e:'rise',ed:1.3}],
+ s09:[{r:R(100,155,720,225),a:'',e:'slideL',ed:0},{r:R(825,100,1110,335),a:'bob2',e:'slideR',ed:.3,ld:3.4},{r:R(222,305,535,415),a:'',e:'lin',ed:.7},{r:R(580,305,975,415),a:'',e:'lin',ed:.95},{r:R(222,452,560,562),a:'',e:'lin',ed:1.2},{r:R(605,452,975,562),a:'',e:'lin',ed:1.45}],
+ s10:[{r:R(100,165,1000,235),a:'',e:'slideL',ed:0},{r:R(210,245,985,565),a:'breath',e:'lin',ed:.4,ld:5}],
+ s11:[{r:R(220,135,955,225),a:'',e:'drop',ed:0},{r:R(200,225,440,440),a:'grow',e:'rise',ed:.4,ld:4,o:'50% 95%'},{r:R(415,240,490,300),a:'spinz',e:'lin',ed:.7,ld:5},{r:R(715,225,985,475),a:'float',e:'lin',ed:.9,ld:4.4},{r:R(170,570,440,640),a:'',e:'lin',ed:1.4},{r:R(730,570,990,640),a:'',e:'lin',ed:1.7}],
+ s12:[{r:R(195,150,980,225),a:'',e:'drop',ed:0},{r:R(690,270,870,560),a:'hop',e:'slideR',ed:.3,ld:2.8},{r:R(860,280,1070,560),a:'sway',e:'slideR',ed:.6,ld:4.5,o:'50% 0%'},{r:R(60,390,700,460),a:'',e:'slideL',ed:.9},{r:R(60,485,720,555),a:'',e:'slideL',ed:1.2},{r:R(60,580,745,650),a:'',e:'slideL',ed:1.5}],
+ s13:[{r:R(290,150,890,225),a:'',e:'drop',ed:0},{r:R(160,255,1005,500),a:'',e:'lin',ed:.4},{r:R(225,540,380,632),a:'wiggle',e:'rise',ed:.9,ld:3},{r:R(410,540,570,636),a:'wiggle',e:'rise',ed:1.1,ld:3.3},{r:R(605,535,760,636),a:'wiggle',e:'rise',ed:1.3,ld:3.6},{r:R(795,535,955,636),a:'wiggle',e:'rise',ed:1.5,ld:3.9}],
+ s14:[{r:R(35,105,850,200),a:'',e:'slideL',ed:0}],
+ s15:[{r:R(35,105,880,200),a:'',e:'slideL',ed:0},{r:R(975,240,1080,340),a:'spinz',e:'lin',ed:.5,ld:4}],
+ s16:[{r:R(230,125,940,195),a:'',e:'drop',ed:0},{r:R(125,255,500,345),a:'',e:'slideL',ed:.4},{r:R(430,255,1080,345),a:'',e:'slideR',ed:.6},{r:R(0,215,80,330),a:'spinz',e:'lin',ed:.9,ld:5},{r:R(1090,215,1170,330),a:'spinz',e:'lin',ed:1,ld:5.5}],
+ s17:[{r:R(300,145,880,225),a:'',e:'drop',ed:0},{r:R(490,330,690,595),a:'pulse2',e:'lin',ed:.4,ld:3}],
+ s18:[{r:R(160,125,1010,200),a:'',e:'drop',ed:0},{r:R(670,400,1090,495),a:'wiggle',e:'slideR',ed:.6,ld:4},{r:R(470,445,720,690),a:'grow',e:'rise',ed:.9,ld:4,o:'50% 95%'}],
+ s19:[{r:R(350,160,830,230),a:'',e:'drop',ed:0},{r:R(150,325,345,385),a:'',e:'slideL',ed:.5},{r:R(150,390,345,450),a:'',e:'slideL',ed:.75},{r:R(150,450,345,510),a:'',e:'slideL',ed:1},{r:R(150,510,345,575),a:'',e:'slideL',ed:1.25},{r:R(150,575,345,635),a:'',e:'slideL',ed:1.5},{r:R(405,440,880,640),a:'hop',e:'rise',ed:.6,ld:2.2},{r:R(375,615,885,725),a:'breath',e:'rise',ed:1.8,ld:2.4}],
+ s23:[{r:R(130,130,1050,245),a:'',e:'drop',ed:0},{r:R(0,95,700,740),a:'swayS',e:'',ed:0,ld:7,o:'15% 100%'},{r:R(775,250,1005,470),a:'float',e:'slideR',ed:.6,ld:3.8},{r:R(700,430,930,655),a:'float',e:'slideR',ed:1,ld:4.4}],
+ s24:[{r:R(60,90,1110,740),a:'breath',e:'lin',ed:0,ld:8},{r:R(215,390,950,580),a:'',e:'lin',ed:.8}]
+};
+const FX={
+ s01:[...[[150,395],[178,378],[250,410],[300,420]].flatMap(([x,y],i)=>[0,1.7,3.4].map(d=>({t:'smoke',p:PT(x,y),dl:d+i*.4}))),
+      {t:'spk',p:PT(650,440),sz:3,dl:0},{t:'spk',p:PT(620,470),dl:.7},{t:'spk',p:PT(690,455),dl:1.3},{t:'halo',r:R(585,385,725,515)},
+      {t:'fly',p:PT(900,560),ch:'🦋',dl:0},{t:'fly',p:PT(1000,420),ch:'🦋',dl:-3,d:11},{t:'spk',p:PT(820,280),dl:.4},{t:'spk',p:PT(1080,500),dl:1.1},{t:'glint',r:R(180,135,990,268),d:4.5}],
+ s02:[{t:'glint',r:R(85,145,1085,232),d:5}],
+ s03:[{t:'halo',r:R(560,240,760,420)},{t:'spk',p:PT(650,300),sz:3},{t:'spk',p:PT(600,350),dl:.6},{t:'spk',p:PT(720,330),dl:1.1},{t:'spk',p:PT(560,280),dl:1.6},{t:'spk',p:PT(745,260),dl:.3},{t:'glint',r:R(235,130,935,230),d:4.5,cl:'strong'}],
+ s04:[{t:'beam',p:PT(585,0)},{t:'spk',p:PT(700,300),dl:.2},{t:'spk',p:PT(900,330),dl:.9},{t:'spk',p:PT(1000,450),dl:1.5},{t:'spk',p:PT(820,560),dl:.5},{t:'spk',p:PT(650,640),dl:1.2},{t:'fly',p:PT(240,560),ch:'🐦',dl:0,d:12}],
+ s05:[{t:'glint',r:R(175,544,465,592),d:3.5,dl:1},{t:'glint',r:R(708,544,1002,592),d:3.5,dl:2}],
+ s07b:[...[...Array(9)].map((_,i)=>({t:'bub',p:PT(140+i*110,735),dl:i*.7,sz:(1+Math.random()*1.4)+'cqw',d:5+Math.random()*3})),{t:'halo',r:R(1035,90,1120,160)}],
+ s08:[{t:'halo',r:R(470,320,700,540)},{t:'spk',p:PT(470,330),dl:.2},{t:'spk',p:PT(740,320),dl:.9},{t:'spk',p:PT(800,470),dl:1.5},{t:'glint',r:R(165,130,1005,250),d:4.5}],
+ s09:[{t:'glint',r:R(860,110,1000,240),d:3,cl:'strong'}],
+ s10:[{t:'glint',r:R(235,280,525,545),d:3.6,cl:'strong'},{t:'glint',r:R(655,280,945,545),d:3.6,dl:.6,cl:'strong'}],
+ s11:[{t:'spk',p:PT(830,260),dl:.2},{t:'spk',p:PT(940,330),dl:.9},{t:'spk',p:PT(760,400),dl:1.4},{t:'halo',r:R(740,250,960,450),dl:.5}],
+ s12:[{t:'spk',p:PT(850,330),dl:.5}],
+ s13:[{t:'glint',r:R(445,275,628,357),d:3},{t:'glint',r:R(668,275,858,357),d:3,dl:.4},{t:'glint',r:R(445,405,628,488),d:3,dl:.8},{t:'glint',r:R(668,405,858,488),d:3,dl:1.2}],
+ s14:[{t:'spk',p:PT(140,420),dl:.3},{t:'spk',p:PT(1040,350),dl:1},{t:'spk',p:PT(970,560),dl:1.6}],
+ s15:[...[[120,330],[300,250],[700,260],[880,300],[1040,500],[150,560],[1090,240]].map(([x,y],i)=>({t:'spk',p:PT(x,y),dl:i*.45})),{t:'halo',r:R(970,235,1090,345)}],
+ s16:[{t:'glint',r:R(80,585,1088,695),d:4}],
+ s17:[{t:'halo',r:R(470,320,710,600)}],
+ s18:[{t:'halo',r:R(500,500,680,640)},{t:'spk',p:PT(590,520),dl:.2},{t:'spk',p:PT(560,580),dl:.9},{t:'spk',p:PT(630,560),dl:1.5},{t:'glint',r:R(160,125,1010,200),d:5}],
+ s19:[{t:'spk',p:PT(470,330),dl:.2},{t:'spk',p:PT(870,360),dl:.8},{t:'spk',p:PT(650,300),dl:1.3}],
+ s23:[{t:'dots',r:R(570,437,700,445)},{t:'spk',p:PT(560,450),dl:.3},{t:'spk',p:PT(700,425),dl:1},{t:'spk',p:PT(300,600),dl:1.6}],
+ s24:[...[...Array(16)].map((_,i)=>({t:'fall',p:PT(40+i*72,90),c:['#ff9ec4','#ffe066','#9be3ff','#b6f09c','#d3b3ff','#ffc078'][i%6],dl:-Math.random()*7,d:6+Math.random()*4})),{t:'halo',r:R(400,280,780,560)}]
+};
+function buildLiving(s){
+  const L=$('#lays'),X=$('#lfx');L.innerHTML='';X.innerHTML='';
+  (LAYERS[s.img]||[]).forEach(o=>{const r=o.r,d=document.createElement('div');
+    d.className='ly '+(o.e||'lin')+' '+(o.c||'');if(!o.e)d.style.animationDuration='.01s';
+    d.style.cssText+=`left:${r.l}%;top:${r.t}%;width:${r.w}%;height:${r.h}%;--ed:${o.ed||0}s;--la:${o.a||'none'};--ld:${o.ld||3}s;--lo:${o.o||'50% 50%'}`;
+    const i=document.createElement('i');
+    i.style.backgroundImage=`url(img/${s.img}.jpg)`;
+    i.style.backgroundSize=`${10000/r.w}% ${10000/r.h}%`;
+    i.style.backgroundPosition=`${r.w>=100?0:r.l/(100-r.w)*100}% ${r.h>=100?0:r.t/(100-r.h)*100}%`;
+    d.appendChild(i);L.appendChild(d)});
+  (FX[s.img]||[]).forEach(o=>{const e=document.createElement('div');e.className='e '+o.t+' '+(o.cl||'');
+    if(o.r)e.style.cssText=`left:${o.r.l}%;top:${o.r.t}%;width:${o.r.w}%;height:${o.r.h}%`;
+    else e.style.cssText=`left:${o.p.x}%;top:${o.p.y}%`;
+    if(o.dl!=null)e.style.setProperty('--dl',o.dl+'s');if(o.d)e.style.setProperty('--d',o.d+'s');
+    if(o.sz)e.style.setProperty('--sz',typeof o.sz==='number'?o.sz+'cqw':o.sz);if(o.c)e.style.setProperty('--c',o.c);
+    e.style.setProperty('--mx',((Math.random()-.3)*4).toFixed(1)+'cqw');
+    if(o.t==='spk')e.textContent='✦';if(o.t==='fly')e.innerHTML=`<b>${o.ch}</b>`;
+    X.appendChild(e)});
+}
+const ENTER_FX={s01:'sparkle',s03:'sparkle',s19:'confetti',s24:'confetti'};
+const DREAM=new Set(['s03','s04','s15','s24']);
+const TOOLS = {
+  timer:{label:'⏲️ จับเวลา'}, picker:{label:'🎯 สุ่มชื่อ'}, world:{label:'🌏 Real or Dream?'},
+  detect:{label:'🚨 Grammar Detective'}, puzzle:{label:'🧩 Build the Rule'},
+  check:{label:'🐢 Eco-Crisis Lifeline'}, tree:{label:'🌳 Tree of Hope'}, score:{label:'🏆 คะแนนกลุ่ม'},
+  media:{label:'📦 สื่อการสอน'}
+};
+
+const MEDIA_HAND=[
+ ['board','Eco Hero Planet Rescue — บอร์ดเกม (ชุดกระดาน)',['elaborate'],'กระดานเกม + Crisis Meter · การ์ด Disaster (สับคว่ำ) · การ์ด Mission (เปิด 3 ใบ) · การ์ด Resource 5 ชนิดต่อทีม'],
+ ['mat','Sentence Mat + บัตรคำสองหน้า (แยกสี)',['explain','elaborate'],'🟡 Condition · 🩷/🟥 Action (V1/V2) · 🔵/🔷 Result (will/would) · 🟢 Environment — ช่อง 5 (หลัง will/would) ต้องเป็นสีชมพูเสมอ'],
+ ['role','การ์ดบทบาท + บัตรคำแยกตามบทบาท',['elaborate'],'Condition Keeper 5 ใบ · Action Keeper 6 ใบ · Eco Keeper 6 ใบ · Result Keeper (will 4 + would 4) · Guardian &amp; Writer — แยกใส่ถุงตามบทบาทก่อนคาบ'],
+ ['book','Mission Record Book',['elaborate','evaluate'],'บันทึกทีม + Writing Journey · Record Sheet · Green Reel Storyboard (ใช้เป็นหลักฐานการประเมิน)'],
+ ['life','Eco-Crisis Lifeline (ฉบับกระดาษ)',['elaborate'],'มาตรวัด Critical / Warning / Safe Zone สำหรับกลุ่มที่ไม่ได้ใช้อุปกรณ์'],
+ ['post','โพสต์อิทสีชมพู + สีเหลือง และโปสเตอร์ Tree of Hope',['evaluate'],'ชมพู = กฎ 3 ข้อ · เหลือง = ประโยค 2 ประโยค · 1 ชุดต่อนักเรียน 1 คน'],
+ ['prize','รางวัลประจำรอบ / สติกเกอร์ Green Hero',['elaborate'],'สำหรับกลุ่มที่ตอบถูกและเร็วที่สุดในแต่ละรอบ']
+];
+const MEDIA_ON=[
+ ['slides','สไลด์ Eco-Heroes (หน้านี้)',['engage','explore','explain','elaborate','evaluate'],'สไลด์ 21 หน้า + บทพูดครู + เครื่องมือในห้องเรียน',null],
+ ['race','Eco Hero Sentence Race',['explain','elaborate'],'เกมแข่งเรียงบัตรคำบน Sentence Mat · โหมดครู/โปรเจกเตอร์ + กลุ่มนักเรียน (รหัสห้อง/QR) · แข่ง 3 รอบ','https://claude.ai/artifact/KBKwWuc9HN7jgpHGXJiAPW'],
+ ['digi','ECO HERO PLANET RESCUE — กระดานดิจิทัล',['elaborate'],'Level 1–2 ต่อประโยคบน Sentence Mat ด้วยการ์ดสองหน้า · Level 3 เกมเต็มสำหรับกลุ่มเก่ง','https://claude.ai/artifact/E5DsyPAaxZqofCFWywS7GZ'],
+ ['lifeon','THE ECO-CRISIS LIFELINE (เว็บแอป)',['elaborate'],'ตัวตรวจประโยคออนไลน์ของครู · Teacher Mode / Practice Mode','https://pratchayapiw.github.io/THE-ECO-CRISIS-LIFELINE/'],
+ ['rules','กติกาการเล่น ECO HERO PLANET RESCUE',['elaborate'],'เอกสารกติกา (การเตรียมเกม · บทบาท · ขั้นตอนรายรอบ · ระดับการเล่น) — เปิดอ่านทวนก่อนคาบ','https://claude.ai/artifact/J3yAMQFSYz52Ugzv412bXb']
+];
+
+/* ============ helpers ============ */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const store={get(k,d){try{const v=localStorage.getItem('eco_'+k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem('eco_'+k,JSON.stringify(v))}catch(e){}}};
+let actx=null;
+function beep(type){
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const seq={ok:[[523,.1],[659,.1],[784,.18]],no:[[220,.18],[180,.25]],tick:[[880,.05]],end:[[880,.25],[0,.1],[880,.25],[0,.1],[1047,.5]],pop:[[660,.07],[990,.09]]}[type]||[[600,.1]];
+    let t=actx.currentTime;
+    seq.forEach(([f,d])=>{ if(f){const o=actx.createOscillator(),g=actx.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g).connect(actx.destination);o.start(t);o.stop(t+d);} t+=d;});
+  }catch(e){}
+}
+function confetti(){
+  const cv=$('#conf'),cx=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const cols=['#2f7d4f','#e9b730','#e07a2e','#2f6fb3','#c94f7c','#7b4bb5'];
+  const ps=Array.from({length:140},()=>({x:innerWidth/2+(Math.random()-.5)*200,y:innerHeight/2,vx:(Math.random()-.5)*16,vy:-Math.random()*16-4,r:Math.random()*6+4,c:cols[Math.random()*6|0],a:Math.random()*6}));
+  let n=0;(function f(){cx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.45;p.a+=.2;cx.fillStyle=p.c;cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.fillRect(-p.r/2,-p.r/2,p.r,p.r*.6);cx.restore()});if(++n<120)requestAnimationFrame(f);else cx.clearRect(0,0,cv.width,cv.height)})();
+}
+const mmss=s=>{s=Math.max(0,Math.round(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+
+/* ============ slides ============ */
+let cur=store.get('cur',0); if(cur>=S.length)cur=0;
+const phasesEl=$('#phases');
+PH_ORDER.forEach(k=>{const b=document.createElement('button');b.className='ph';b.style.background=PH[k].c;b.dataset.k=k;
+  b.innerHTML=`<b>${PH[k].name}</b>${PH[k].th} · ${PH[k].min}′`;b.onclick=()=>go(S.findIndex(s=>s.ph===k));phasesEl.appendChild(b)});
+const thumbs=$('#thumbs');
+S.forEach((s,i)=>{const b=document.createElement('button');b.className='th';b.innerHTML=`<img src="img/${s.img}.jpg" alt="" loading="lazy"><i style="background:${PH[s.ph].c}"></i>`;b.title=s.title;b.onclick=()=>go(i);thumbs.appendChild(b)});
+// preload
+S.forEach(s=>{const im=new Image();im.src=`img/${s.img}.jpg`});
+
+function go(i){
+  cur=Math.max(0,Math.min(S.length-1,i));store.set('cur',cur);
+  const s=S[cur],p=PH[s.ph];
+  $('#slideImg').src=`img/${s.img}.jpg`;
+  const fr=$('#frame');fr.classList.remove('enter');void fr.offsetWidth;fr.classList.add('enter');
+  buildLiving(s);buildOverlay(s);bstep=0;applyBuild();
+  if(ENTER_FX[s.img]==='confetti')setTimeout(confetti,500);
+  if(ENTER_FX[s.img]==='sparkle')setTimeout(()=>{beep('pop')},350);
+  $$('.ph').forEach(b=>b.classList.toggle('on',b.dataset.k===s.ph));
+  $$('.th').forEach((b,j)=>b.classList.toggle('on',j===cur));
+  const th=$$('.th')[cur];th&&th.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+  $('#quick').innerHTML=s.tools.map(t=>`<button data-t="${t}">${TOOLS[t].label}</button>`).join('');
+  $$('#quick button').forEach(b=>b.onclick=e=>{e.stopPropagation();openTool(b.dataset.t)});quickDraw();
+  $('#notes').innerHTML=`
+    <span class="ntag" style="background:${p.c}">${p.name} · ${p.th}</span>
+    <div class="ntitle">${s.title}</div>
+    <div class="nmeta">⏱ ประมาณ ${s.min} นาที · สไลด์ ${cur+1}/${S.length}</div>
+    <div class="nsec">🎯 เป้าหมายของสไลด์</div><div style="font-size:15.5px;line-height:1.5">${s.goal}</div>
+    <div class="nsec">🗣️ ครูพูด (Teacher talk)</div>${s.say.map(x=>`<div class="say">${x}</div>`).join('')}
+    ${s.do?`<div class="nsec">👩‍🏫 กิจกรรม / ข้อควรทำ</div><ul>${s.do.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}
+    ${BUILDS[s.img]?`<div class="nsec">✨ เฉลยบนสไลด์</div><div style="font-size:15px;line-height:1.5">กด → / Space / แตะสไลด์ เพื่อเฉลยทีละขั้น (${BUILDS[s.img].length} ขั้น)</div>`:''}
+    ${s.ans?`<div class="nsec">✅ คำตอบที่คาดหวัง (เฉพาะครู)</div><div class="ans" onclick="this.classList.toggle('show')">${s.ans}</div><div class="anshint">👆 แตะเพื่อดู/ซ่อนเฉลย</div>`:''}
+    ${s.tools.length?`<div class="nsec">🧰 เครื่องมือของสไลด์นี้</div>${s.tools.map(t=>`<button class="toolbtn" data-t="${t}">${TOOLS[t].label}</button>`).join('')}`:''}
+    <div class="nsec" style="margin-top:18px">⌨️ ปุ่มลัด</div>
+    <div style="font-size:14px;color:var(--muted);line-height:1.6">← → เปลี่ยนสไลด์ · N ซ่อน/แสดงบทสอน · T เครื่องมือ · F เต็มจอ · Esc ปิดเครื่องมือ</div>`;
+  $$('#notes .toolbtn').forEach(b=>b.onclick=()=>openTool(b.dataset.t));
+}
+$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>advance();
+let bstep=0;
+function buildOverlay(s){
+  const ov=$('#ovl');ov.innerHTML='';const st=BUILDS[s.img]||[];
+  st.forEach((step,k)=>step.forEach(e=>{const d=document.createElement('div');
+    d.className=`b b-${e.c} ${e.cl||''}`;d.style.cssText=`left:${e.r.l}%;top:${e.r.t}%;width:${e.r.w}%;height:${e.r.h}%;--col:${e.col||''}`;
+    if(e.c==='cover'){d.dataset.hide=k+1;d.textContent='❓ '+(e.t||'');d.style.animationDelay=(-Math.random()*2)+'s'}
+    else{d.dataset.show=k+1;d.innerHTML=e.t||'';
+      if(e.c==='chip'){d.style.background=e.col;const fx=e.from.l+e.from.w/2-(e.r.l+e.r.w/2),fy=e.from.t+e.from.h/2-(e.r.t+e.r.h/2);d.style.setProperty('--dx',fx+'cqw');d.style.setProperty('--dy',fy+'cqh')}}
+    ov.appendChild(d)}));
+  const fx=$('#fx');fx.innerHTML='';const em=DREAM.has(s.img)?['✨','⭐','✨']:['🍃','🌿','🍃'];
+  for(let i=0;i<7;i++){const sp=document.createElement('span');const left=i%2?88+Math.random()*9:Math.random()*9;
+    sp.textContent=em[i%3];sp.style.cssText=`left:${left}%;top:${45+Math.random()*50}%;--d:${9+Math.random()*7}s;--dl:${-Math.random()*10}s;--mx:${(Math.random()-.5)*8}cqw`;fx.appendChild(sp)}
+}
+function applyBuild(){
+  $$('#ovl [data-hide]').forEach(d=>d.classList.toggle('gone',+d.dataset.hide<=bstep));
+  $$('#ovl [data-show]').forEach(d=>d.classList.toggle('in',+d.dataset.show<=bstep));
+  const tot=(BUILDS[S[cur].img]||[]).length;
+  $('#counter').textContent=`${cur+1} / ${S.length}`+(tot?` · เฉลย ${bstep}/${tot}`:'');
+  quickDraw();
+}
+function quickDraw(){const tot=(BUILDS[S[cur].img]||[]).length;let rb=$('#revBtn');
+  if(tot&&bstep<tot){if(!rb){rb=document.createElement('button');rb.id='revBtn';rb.className='revealbtn';rb.onclick=e=>{e.stopPropagation();advance()};$('#quick').prepend(rb)}rb.textContent=`✨ เฉลย (${bstep+1}/${tot})`}
+  else if(rb)rb.remove()}
+function advance(){const tot=(BUILDS[S[cur].img]||[]).length;
+  if(bstep<tot){bstep++;applyBuild();const st=BUILDS[S[cur].img][bstep-1];beep(st.some(e=>e.c==='chip'||e.c==='ring')?'ok':'pop');
+    if(bstep===tot&&['s13','s17'].includes(S[cur].img))setTimeout(confetti,700)}
+  else go(cur+1)}
+$('#frame').addEventListener('click',e=>{advance()});
+function fit(){const st=$('#stage');const W=st.clientWidth-28,H=st.clientHeight-28;let w=Math.min(W,H*1280/716);w=Math.max(w,200);
+  $('#frame').style.width=w+'px';$('#frame').style.height=(w*716/1280)+'px'}
+addEventListener('resize',fit);new ResizeObserver(fit).observe($('#stage'));
+let tx=null;$('#stage').addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+$('#stage').addEventListener('touchend',e=>{if(tx==null)return;const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50){d<0?advance():go(cur-1)}tx=null});
+
+let notesOn=store.get('notes',true);
+function setNotes(){$('#main').classList.toggle('nonotes',!notesOn);$('#notesBtn').classList.toggle('on',notesOn);store.set('notes',notesOn)}
+$('#notesBtn').onclick=()=>{notesOn=!notesOn;setNotes()};
+let animOn=store.get('anim',true);function setAnim(){document.body.classList.toggle('noanim',!animOn);$('#animBtn').classList.toggle('on',animOn);store.set('anim',animOn)}
+$('#animBtn').onclick=()=>{animOn=!animOn;setAnim();if(animOn)buildLiving(S[cur])};setAnim();
+$('#fsBtn').onclick=()=>{try{if(document.fullscreenElement)document.exitFullscreen();else $('#stage').requestFullscreen().catch(()=>{})}catch(e){}};
+
+document.addEventListener('keydown',e=>{
+  if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))return;
+  const ovOn=$('#ov').classList.contains('show');
+  if(e.key==='Escape'&&ovOn){closeTool();return}
+  if(ovOn)return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();advance()}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){go(cur-1)}
+  else if(e.key==='n'||e.key==='N'){notesOn=!notesOn;setNotes()}
+  else if(e.key==='t'||e.key==='T'){openTool(S[cur].tools[0]||'timer')}
+  else if(e.key==='f'||e.key==='F'){$('#fsBtn').click()}
+});
+
+/* lesson clock */
+let lt={run:false,el:store.get('lt',0),last:0};
+function ltDraw(){$('#lt').textContent=mmss(lt.el);$('#lt').classList.toggle('over',lt.el>50*60);$('#ltBtn').textContent=lt.run?'หยุด':(lt.el?'ต่อ':'เริ่มคาบ')}
+$('#ltBtn').onclick=()=>{lt.run=!lt.run;lt.last=Date.now();ltDraw()};
+$('#ltReset').onclick=()=>{lt.run=false;lt.el=0;store.set('lt',0);ltDraw()};
+setInterval(()=>{if(lt.run){const n=Date.now();lt.el+=(n-lt.last)/1000;lt.last=n;store.set('lt',lt.el);ltDraw()}},500);
+ltDraw();
+
+/* ============ tools overlay ============ */
+const tabs=$('#tabs');
+Object.entries(TOOLS).forEach(([k,v])=>{const b=document.createElement('button');b.className='tab';b.dataset.t=k;b.textContent=v.label;b.onclick=()=>openTool(k);tabs.appendChild(b)});
+function openTool(k){$('#ov').classList.add('show');$$('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t===k));$$('.tool').forEach(s=>s.classList.toggle('on',s.id==='t-'+k));if(k==='tree')drawTree()}
+function closeTool(){$('#ov').classList.remove('show')}
+$('#toolsBtn').onclick=()=>openTool(S[cur].tools[0]||'timer');
+$('#closeOv').onclick=closeTool;
+$('#ov').addEventListener('click',e=>{if(e.target.id==='ov')closeTool()});
+
+/* --- Timer --- */
+let tm={total:120,left:120,run:false,last:0};
+[[30,'30 วิ'],[60,'1 นาที'],[120,'2 นาที'],[180,'3 นาที'],[300,'5 นาที'],[360,'6 นาที'],[600,'10 นาที']].forEach(([s,l])=>{
+  const b=document.createElement('button');b.className='btn alt';b.textContent=l;b.onclick=()=>{tm={total:s,left:s,run:false};tDraw()};$('#tPresets').appendChild(b)});
+function tDraw(){const d=$('#tDisp');d.textContent=mmss(tm.left);d.classList.toggle('warn',tm.left<=10&&tm.left>0);d.classList.toggle('end',tm.left<=0);
+  $('#tBar').style.width=(100*tm.left/tm.total)+'%';$('#tBar').style.background=tm.left<=10?'var(--red)':'var(--green)';$('#tStart').textContent=tm.run?'⏸ Pause':'▶ Start'}
+$('#tStart').onclick=()=>{if(tm.left<=0)tm.left=tm.total;tm.run=!tm.run;tm.last=Date.now();tDraw()};
+$('#tReset').onclick=()=>{tm.left=tm.total;tm.run=false;tDraw()};
+$('#tPlus').onclick=()=>{tm.left+=30;tm.total=Math.max(tm.total,tm.left);tDraw()};
+$('#tMinus').onclick=()=>{tm.left=Math.max(0,tm.left-30);tDraw()};
+let lastSec=-1;
+setInterval(()=>{if(!tm.run)return;const n=Date.now();tm.left-=(n-tm.last)/1000;tm.last=n;
+  const s=Math.ceil(tm.left);if(s!==lastSec&&s<=5&&s>0)beep('tick');lastSec=s;
+  if(tm.left<=0){tm.left=0;tm.run=false;beep('end')}tDraw()},200);
+tDraw();
+
+/* --- Score --- */
+const TCOL=['#2f7d4f','#2f6fb3','#e07a2e','#7b4bb5','#c94f7c','#b8860b','#16838a','#a0522d','#556b2f','#8b3a62'];
+const DEF=['Ocean Savers','Forest Guardians','Air Defenders','Recycle Rangers','Solar Squad','Wildlife Watch','Water Warriors','Earth Keepers','Green Giants','Eco Ninjas'];
+let teams=store.get('teams',null)||DEF.slice(0,6).map(n=>({n,s:0}));
+function sDraw(){$('#sN').value=teams.length;$('#teams').innerHTML=teams.map((t,i)=>`<div class="team" style="background:${TCOL[i]}"><input value="${t.n.replace(/"/g,'&quot;')}" data-i="${i}"><div class="s">${t.s}</div><button data-i="${i}" data-d="-1">−</button><button data-i="${i}" data-d="1">+</button></div>`).join('');
+  $$('#teams input').forEach(el=>el.oninput=()=>{teams[el.dataset.i].n=el.value;store.set('teams',teams)});
+  $$('#teams button').forEach(b=>b.onclick=()=>{const t=teams[b.dataset.i];t.s=Math.max(0,t.s+ +b.dataset.d);beep(+b.dataset.d>0?'pop':'no');store.set('teams',teams);sDraw()})}
+$('#sN').onchange=()=>{const n=Math.max(2,Math.min(10,+$('#sN').value||6));while(teams.length<n)teams.push({n:DEF[teams.length],s:0});teams.length=n;store.set('teams',teams);sDraw()};
+$('#sReset').onclick=()=>{teams.forEach(t=>t.s=0);store.set('teams',teams);sDraw()};
+sDraw();
+
+/* --- Picker --- */
+let used=[];
+function pPool(){return $('#pMode').value==='team'?teams.map(t=>t.n):Array.from({length:+$('#pN').value||40},(_,i)=>String(i+1))}
+function pDraw(){$('#pList').innerHTML=used.map(u=>`<span>${u}</span>`).join('')}
+$('#pReset').onclick=()=>{used=[];$('#pDisp').textContent='?';pDraw()};
+$('#pMode').onchange=()=>{used=[];$('#pDisp').textContent='?';$('#pDisp').classList.toggle('small',$('#pMode').value==='team');pDraw()};
+$('#pGo').onclick=()=>{let pool=pPool().filter(x=>!used.includes(x));if(!pool.length){used=[];pool=pPool()}
+  const fin=pool[Math.random()*pool.length|0];let k=0;const d=$('#pDisp');const iv=setInterval(()=>{d.textContent=pool[Math.random()*pool.length|0];beep('tick');if(++k>16){clearInterval(iv);d.textContent=fin;used.push(fin);pDraw();beep('ok')}},70)};
+
+/* --- Real or Dream --- */
+const W=[
+ ['If it <b>rains</b> tomorrow, we <b>will</b> stay at home.','real','เกิดขึ้นได้จริงในอนาคต → Present Simple + will'],
+ ['If I <b>were</b> a fish, I <b>would</b> clean the ocean.','dream','เราเป็นปลาไม่ได้ → สมมติ → were + would'],
+ ['If we <b>turn</b> off the lights, we <b>will</b> save energy.','real','ทำได้จริงทุกวัน → Type 1'],
+ ['If I <b>had</b> a magic wand, I <b>would</b> stop pollution.','dream','ไม่มีไม้กายสิทธิ์จริง → Type 2'],
+ ['If people <b>use</b> cloth bags, there <b>will</b> be less plastic.','real','เป็นไปได้จริง → Type 1'],
+ ['If animals <b>could</b> talk, they <b>would</b> ask us to stop littering.','dream','สัตว์พูดไม่ได้ → จินตนาการ → Type 2'],
+ ['If the factory <b>stops</b> the smoke, the air <b>will</b> be cleaner.','real','มีโอกาสเกิดขึ้นจริง → Type 1'],
+ ['If I <b>were</b> the Prime Minister, I <b>would</b> ban plastic bags.','dream','ตอนนี้เราไม่ใช่นายกฯ → สมมติ → Type 2'],
+ ['If we <b>don’t</b> save water, we <b>will</b> have droughts.','real','ผลที่เกิดได้จริง → Type 1'],
+ ['If the Earth <b>had</b> no trees, we <b>would</b> not breathe.','dream','สถานการณ์สมมติ (ตอนนี้ยังมีต้นไม้) → Type 2']
+];
+let wi=0,wans=false,wsc=[0,0];
+function wDraw(){$('#wCard').innerHTML=W[wi][0].replace(/<b>/g,'<b class="hl2">');$('#wFb').innerHTML='';wans=false;$('#wCount').textContent=`ข้อ ${wi+1}/${W.length}`;$('#wScore').textContent=`ห้องตอบถูก ${wsc[0]}/${wsc[1]}`}
+$$('.rd button').forEach(b=>b.onclick=()=>{if(wans)return;wans=true;const ok=b.dataset.a===W[wi][1];wsc[1]++;if(ok)wsc[0]++;
+  $('#wFb').innerHTML=`<b class="${ok?'ok':'no'}">${ok?'✅ Correct!':'❌ Not quite!'}</b> ${W[wi][1]==='real'?'🏙️ Real World':'✨ Dream World'} — ${W[wi][2]}`;beep(ok?'ok':'no');if(ok)confetti();$('#wScore').textContent=`ห้องตอบถูก ${wsc[0]}/${wsc[1]}`});
+$('#wNext').onclick=()=>{wi=(wi+1)%W.length;if(wi===0)wsc=[0,0];wDraw()};
+wDraw();
+
+/* --- Detective --- */
+const D=[
+ ['If we <mark>will recycle</mark>, we will reduce waste.','If we <u>recycle</u>, we will reduce waste.','ห้ามใช้ <b>will</b> หลัง if — if-clause ของ Type 1 ใช้ Present Simple'],
+ ['If I <mark>would be</mark> a hero, I would protect forests.','If I <u>were</u> a hero, I would protect forests.','ห้ามใช้ <b>would</b> หลัง if — Type 2 ใช้ Past Simple และใช้ <b>were</b> กับทุกประธาน'],
+ ['If everyone <mark>recycle</mark>, the Earth will be cleaner.','If everyone <u>recycles</u>, the Earth will be cleaner.','<b>everyone</b> เป็นเอกพจน์ → กริยา Present Simple ต้องเติม -s'],
+ ['If I had a boat, I <mark>will</mark> clean the river.','If I had a boat, I <u>would</u> clean the river.','if-clause เป็น Past Simple (Type 2) → ผลต้องใช้ <b>would</b>'],
+ ['If we plant trees, the air <mark>would</mark> be clean.','If we plant trees, the air <u>will</u> be clean.','if-clause เป็น Present Simple (Type 1) → ผลต้องใช้ <b>will</b>'],
+ ['If she saves water, she will <mark>helps</mark> the Earth.','If she saves water, she will <u>help</u> the Earth.','หลัง will / would ใช้กริยาช่อง 1 ไม่เติม -s']
+];
+$('#detList').innerHTML=D.map((d,i)=>`<div class="dcase" id="dc${i}"><div class="row"><span style="font-size:24px">❌</span><div class="w plain" style="flex:1">${d[0]}</div>
+  <button class="btn alt" data-h="${i}">🔍 ชี้จุดผิด</button><button class="btn" data-f="${i}">✅ เฉลย</button></div>
+  <div class="fix">✔️ <span class="c">${d[1]}</span><br>💡 ${d[2]}</div></div>`).join('');
+$$('[data-h]').forEach(b=>b.onclick=()=>{$('#dc'+b.dataset.h+' .w').classList.remove('plain');beep('pop')});
+$$('[data-f]').forEach(b=>b.onclick=()=>{const c=$('#dc'+b.dataset.f);c.classList.add('open');c.querySelector('.w').classList.remove('plain');beep('ok')});
+
+/* --- Puzzle --- */
+const PZ={f1:'Present Simple',f2:'will',s1:'Past Simple',s2:'would'};
+let sel=null;
+function pzInit(){sel=null;$('#pzFb').innerHTML='';$$('.slot').forEach(s=>{s.textContent='';s.className='slot';s.dataset.v=''});
+  const pcs=[['Present Simple','tense'],['Past Simple','tense'],['will','modal'],['would','modal']].sort(()=>Math.random()-.5);
+  $('#pieces').innerHTML=pcs.map(([t,c])=>`<button class="piece ${c}" data-v="${t}">${t}</button>`).join('');
+  $$('.piece').forEach(p=>p.onclick=()=>{$$('.piece').forEach(x=>x.classList.remove('sel'));sel=p;p.classList.add('sel');beep('tick')})}
+$$('.slot').forEach(s=>s.onclick=()=>{
+  if(s.classList.contains('ok'))return;
+  if(!sel){$('#pzFb').innerHTML='แตะชิ้นจิ๊กซอว์ก่อน แล้วค่อยแตะช่อง';return}
+  if(PZ[s.dataset.k]===sel.dataset.v){s.textContent=sel.dataset.v;s.className='slot ok';sel.classList.add('used');sel.classList.remove('sel');sel=null;beep('ok');
+    if($$('.slot.ok').length===4){$('#pzFb').innerHTML='<b class="ok">🎉 Rule complete!</b> First = If + Present Simple, will + V1 · Second = If + Past Simple, would + V1';confetti()}}
+  else{s.className='slot bad';beep('no');$('#pzFb').innerHTML='<b class="no">ยังไม่ใช่!</b> ลองคิดดู: ประโยคนี้เป็นเรื่องจริง หรือเรื่องสมมติ?';setTimeout(()=>{if(!s.classList.contains('ok'))s.className='slot'},500)}});
+$('#pzReset').onclick=pzInit;pzInit();
+
+/* --- Eco-Crisis Lifeline --- */
+const ZONES=[
+ {k:'SAFE ZONE',ic:'🛡️',big:'โลกปลอดภัย!',txt:'อาวุธไวยากรณ์เสถียรมาก<br>ลุยทำช่องถัดไปได้เลยฮีโร่!',cps:[]},
+ {k:'WARNING ZONE',ic:'⚠️',big:'กริยาติดเชื้อ!',txt:'เช็กประธานด่วน และจำไว้ว่าหลังกลุ่ม Will / Would ต้องใช้ร่างบริสุทธิ์ (V.inf)<br><b>ห้ามเติมแต่ง s/es/ed เด็ดขาด!</b>',cps:[1,2,3]},
+ {k:'CRITICAL ZONE',ic:'🚨',big:'มิติเวลาบิดเบี้ยว!',txt:'เขตหลัง If เป็นพื้นที่ต้องห้าม <b>ห้ามใช้ Will/Would</b> เด็ดขาด!<br>ถ้าเป็นโลกจริงใช้ <b>V.1</b><br>ถ้าเป็นโลกฝันใช้ <b>V.2</b> หรือ <b>WERE</b> เท่านั้น!',cps:[4,5,6]},
+ {k:'CRISIS ZONE',ic:'☠️',big:'สะพานขาด/ ตรรกะรวน!',txt:'เช็กด่วนว่าอะไรเป็นเหตุเป็นผล และจำกฎเหล็ก: ถ้า If อยู่หน้า ต้องใส่ <b>,</b> คั่นกลางประโยคเสมอ! ถ้า If อยู่กลาง <b>ห้ามใส่คอมม่า!</b>',cps:[7,8]}
+];
+const CPS={
+ 1:'ลืมเติม s/es ที่ประธานเอกพจน์ (Type 1)',
+ 2:'เผลอผันกริยาหลัง will / would / won\'t / wouldn\'t',
+ 3:'สะกดกริยาช่อง 2 ผิดฟอร์ม (เช่นใช้ bringed หรือ wered)',
+ 4:'ใส่ Will / Would ซ้อนหลัง If ลอย ๆ',
+ 5:'ลืมเปลี่ยนกริยาเป็นช่อง 2 หรือใช้ WERE ใน Type 2',
+ 6:'สลับที่เอา would ไปไว้หลัง If (เช่น If we would carry…)',
+ 7:'เรื่องเครื่องหมาย: ลืมคอมม่า ( , ) ตอน If อยู่หน้า หรือแอบใส่คอมม่าเกินมาตอน If อยู่ตรงกลาง',
+ 8:'เรื่องตรรกะเหตุผล: แต่งประโยคสลับเหตุ–ผล (ตรรกะวินาศ)'
+};
+const CP_ZONE={1:1,2:1,3:1,4:2,5:2,6:2,7:3,8:3};
+const CP_NO={1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:7};
+const PAST=new Set('was were had did went made took saw came got gave bought built ate drank drove found flew grew knew left lost ran said sold sent spent threw thought told understood won wrote could became began brought caught chose felt kept met paid put read cut let set rode sang sat slept spoke stood swam taught wore might hit hurt cost broke fell forgot heard held led meant rose shut stole stuck swept woke'.split(' '));
+const BADV2={bringed:'brought',wered:'were',goed:'went',buyed:'bought',thinked:'thought',catched:'caught',teached:'taught',eated:'ate',maked:'made',taked:'took',gived:'gave',comed:'came',runned:'ran',writed:'wrote',drinked:'drank',drived:'drove',flyed:'flew',growed:'grew',knowed:'knew',sayed:'said',seed:'saw',throwed:'threw',haved:'had',doed:'did',getted:'got',finded:'found',buyd:'bought',builded:'built',leaved:'left',losed:'lost',sended:'sent',spended:'spent',selled:'sold',telled:'told',feeled:'felt',keeped:'kept',meeted:'met',payed:'paid',sleeped:'slept',speaked:'spoke',swimmed:'swam',weared:'wore',choosed:'chose',breaked:'broke',falled:'fell',heared:'heard',stealed:'stole',waked:'woke',standed:'stood'};
+const PRES=new Set('is am are has have do does go goes can'.split(' '));
+const THIRD=new Set('he she it everyone everybody someone somebody nobody everything something nothing this that'.split(' '));
+const DET=['the','my','your','our','their','his','her','this','that','these','those','a','an','some','many','all','no','every','each'];
+const isPast=v=>PAST.has(v)||(/[a-z]{2,}ed$/.test(v)&&!BADV2[v]);
+function analyze(raw){
+  const hits=new Map();const add=(n,msg)=>{if(!hits.has(n))hits.set(n,[]);hits.get(n).push(msg)};
+  const s=raw.trim();if(!s)return null;
+  const low=s.toLowerCase().replace(/[’']/g,"'").replace(/[^a-z' ,.!?]/g,' ').replace(/\s+/g,' ').trim();
+  if(!/\bif\b/.test(low)){add(8,'ไม่พบคำว่า If — ยังไม่ใช่ประโยคเงื่อนไข');return hits}
+  let ifc,mainc;const ifFirst=/^if\b/.test(low);
+  if(ifFirst){const k=low.indexOf(',');
+    if(k<0){add(7,'If อยู่หน้าประโยค แต่ไม่มีคอมม่าคั่นกลาง');
+      const m=low.match(/^(if .*?)\s((?:[a-z]+ )?(?:will|won't|would|wouldn't|[a-z]+'ll|[a-z]+'d)\b.*)$/);
+      if(m){ifc=m[1];mainc=m[2]}else{ifc=low;mainc=''}}
+    else{ifc=low.slice(0,k);mainc=low.slice(k+1)}}
+  else{const k=low.search(/\bif\b/);mainc=low.slice(0,k);ifc=low.slice(k);
+    if(/,\s*$/.test(mainc.trim())||/,\s*if\b/.test(low))add(7,'If อยู่กลางประโยค แต่ใส่คอมม่าหน้า If');}
+  ifc=ifc.replace(/[.,!?]/g,' ').replace(/\s+/g,' ').trim();mainc=(mainc||'').replace(/[.,!?]/g,' ').replace(/\s+/g,' ').trim();
+  const iw=ifc.split(' ').slice(1),mw=mainc?mainc.split(' '):[];
+  const isWill=w=>/^(will|won't)$/.test(w)||/'ll$/.test(w), isWould=w=>/^(would|wouldn't)$/.test(w)||/'d$/.test(w);
+  const ifWill=iw.some(isWill),ifWould=iw.some(isWould),mWill=mw.some(isWill),mWould=mw.some(isWould);
+  if(ifWould&&!mWould&&!mWill)add(6,'would อยู่ในส่วน If แต่ส่วนผลไม่มี would — สลับที่กัน');
+  else if(ifWill||ifWould)add(4,`มี ${ifWill?'will':'would'} อยู่หลัง If`);
+  const type=mWill&&!mWould?1:mWould&&!mWill?2:0;
+  if(!mainc)add(8,'ยังไม่มีส่วนผลลัพธ์ (main clause)');
+  else if(!type&&!(ifWould&&!mWould))add(5,'ส่วนผลไม่มี will (Type 1) หรือ would (Type 2)');
+  // misspelled V2 anywhere
+  [...iw,...mw].forEach(w=>{if(BADV2[w])add(3,`${w} → ควรเป็น ${BADV2[w]}`)});
+  // subject / verb in if-clause
+  let si=1;if(DET.includes(iw[0]))si=2;
+  const subj=iw.slice(0,si).join(' ');let verb=iw[si]||'';
+  const PLURAL=new Set('i you we they people children students kids friends families animals turtles fish humans'.split(' '));
+  const plural=PLURAL.has(subj)||(si===2&&(/[^s]s$/.test(iw[1]||'')||['these','those','many','all','some'].includes(iw[0])))||PLURAL.has(iw[1]||'')&&si===2;
+  const third=!plural&&(THIRD.has(subj)||(si===2&&!/s$/.test(iw[1]||'')&&!['these','those','many','all','some'].includes(iw[0])&&!['fish','sheep','people','children'].includes(iw[1])));
+  if(!(ifWill||ifWould)&&verb&&!BADV2[verb]){
+    if(type===1){
+      if(verb==="didn't"||(isPast(verb)&&!['read','put','cut','let','set','hit','hurt','cost','shut'].includes(verb)))add(5,`Type 1 (will) แต่หลัง If ใช้ ${verb} (อดีต) — มิติเวลาไม่ตรงกัน`);
+      else if(third&&verb==="don't")add(1,`ประธาน ${subj} เป็นเอกพจน์ → doesn't`);
+      else if(third&&!/s$/.test(verb)&&!["doesn't",'can','must','was','were','had','did'].includes(verb))add(1,`ประธาน ${subj} เป็นเอกพจน์ → ${verb} ต้องเติม s/es`);
+      else if(plural&&verb==="doesn't")add(1,`ประธาน ${subj} → ใช้ don't`);
+      else if(subj==='i'&&verb==='is')add(1,'ประธาน I → ใช้ am');
+      else if(plural&&subj!=='i'&&verb==='is')add(1,`ประธาน ${subj} → ใช้ are`);
+      else if(plural&&(verb==='has'||verb==='does'||(/[^s]s$/.test(verb)&&!/(us|is)$/.test(verb)&&verb.length>2)))add(1,`ประธาน ${subj} ไม่ใช่เอกพจน์บุรุษที่ 3 → ${verb} ห้ามเติม s/es`);
+    }
+    if(type===2){
+      if(PRES.has(verb)||verb==="don't"||verb==="doesn't"||(!isPast(verb)&&verb!=="didn't"&&!/^(could|might)$/.test(verb)))add(5,`Type 2 (would) แต่หลัง If ใช้ ${verb} — ต้องเป็นช่อง 2 หรือ WERE`);
+      else if(verb==='was')add(5,'Type 2 ใช้ WERE กับทุกประธาน (If I were…)');
+    }
+  }
+  // verb after will/would
+  const mi=mw.findIndex(w=>isWill(w)||isWould(w));
+  if(mi>=0){let nx=mw[mi+1]||'';if(nx==='not')nx=mw[mi+2]||'';
+    const okS=['this','is','was','has','us','plus','bus','gas','focus','discuss','pass','miss','kiss','cross','express','process','dress','guess','less','toss','boss'];
+    const okEd=['need','feed','seed','bleed','breed','speed','succeed','proceed','exceed','shed','bed','red'];
+    if(!nx)add(8,'หลัง will / would ยังไม่มีกริยา');
+    else if(BADV2[nx]||(/ed$/.test(nx)&&nx.length>3&&!okEd.includes(nx))||PAST.has(nx)&&!['read','put','cut','let','set','hit','hurt','cost','shut'].includes(nx))add(2,`${nx} หลัง will/would ต้องเป็น V.inf`);
+    else if(/ing$/.test(nx)&&nx.length>4)add(2,`${nx} หลัง will/would ต้องเป็น V.inf`);
+    else if(/[^s]s$/.test(nx)&&nx.length>3&&!okS.includes(nx))add(2,`${nx} หลัง will/would ต้องไม่เติม s/es`);
+  }
+  return hits;
+}
+let lfHits=new Map(),lfManual=new Set(),lfZone=-1;
+function zoneOf(set){let z=0;set.forEach(n=>{z=Math.max(z,CP_ZONE[n])});return z}
+const PZ_CARD=[{l:.75,w:23.45},{l:24.7,w:23.4},{l:48.5,w:25.6},{l:74.4,w:25}];
+const PZ_HEAD=[{l:8.6,w:17.4},{l:26.0,w:24.1},{l:50.1,w:26.1},{l:76.2,w:18}];
+const PZ_SEP=[20.3,48.5,79.0],PZ_CTR=[10.15,34.4,63.75,89.5];
+const PZ_GLOW=['rgba(110,230,120,.95)','rgba(255,205,60,.95)','rgba(255,95,70,.95)','rgba(255,255,255,.85)'];
+const PIN={1:[26.2,83.8],2:[26.2,86.3],3:[26.2,90.6],4:[50.5,83.2],5:[50.5,85.7],6:[50.5,90.6],7:[76.1,84.7],8:[76.1,91.2]};
+function lfRenderZones(){
+  const all=new Set([...lfHits.keys(),...lfManual]);
+  const dim=$('#pdim');
+  dim.innerHTML=lfZone<0?'':PZ_CARD.map((c,i)=>i===lfZone
+     ?`<div class="gl" style="left:${c.l}%;width:${c.w}%;top:42.3%;height:52.5%;--g:${PZ_GLOW[i]}"></div>`
+     :`<div class="dz" style="left:${c.l}%;width:${c.w}%;top:42.3%;height:52.5%"></div>`).join('')
+     +`<div class="hl" style="left:${PZ_HEAD[lfZone].l}%;width:${PZ_HEAD[lfZone].w}%;top:10.5%;height:9.5%;--g:${PZ_GLOW[lfZone]}"></div>`;
+  $('#ppins').innerHTML=Object.entries(PIN).map(([n,[x,y]])=>`<div class="pin ${all.has(+n)?'hit':''}" data-cp="${n}" title="พิกัด ${CP_NO[n]}" style="left:${x}%;top:${y}%"></div>`).join('');
+  $$('#ppins .pin').forEach(el=>el.onclick=e=>{e.stopPropagation();const n=+el.dataset.cp;lfManual.has(n)?lfManual.delete(n):lfManual.add(n);
+    const all2=new Set([...lfHits.keys(),...lfManual]);setZone(all2.size?zoneOf(all2):Math.max(lfZone,0),true)});
+  const iss=$('#cIss');iss.innerHTML=lfHits.size?[...lfHits].map(([n,m])=>`<div>📍 พิกัด ${CP_NO[n]} (${CPS[n]}): ${m.join(' · ')}</div>`).join(''):(lfZone===0?'<div>✅ ไม่พบจุดผิดในโครงสร้างหลัก (ครูตรวจความหมายประกอบ)</div>':'<div>ยังไม่ได้ตรวจ</div>');
+}
+function setZone(z,sound){
+  lfZone=z;const t=$('#turtle');t.classList.remove('drag','shake','bob');
+  t.style.left=PZ_CTR[z]+'%';void t.offsetWidth;t.classList.add(z===0?'bob':'shake');
+  const L=$('#lfLock');L.classList.remove('show');void L.offsetWidth;L.classList.add('show');
+  L.innerHTML=`🔒 ล็อกระดับ: <span style="color:${['#1f8a3b','#a86c00','#d23a2a','#111'][z]};margin-left:.5cqw">${ZONES[z].ic} ${['SAFE','WARNING','CRITICAL','CRISIS'][z]}</span>`;
+  lfRenderZones();
+  if(sound){beep(z===0?'ok':z===1?'pop':'no');if(z===0)confetti()}
+}
+function lfCheck(){const h=analyze($('#cIn').value);if(!h){$('#cIn').focus();return}
+  lfHits=h;lfManual=new Set();setZone(zoneOf(new Set(h.keys())),true)}
+$('#cGo').onclick=lfCheck;
+$('#cIn').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();lfCheck()}});
+$$('.lfex[data-ex]').forEach(b=>b.onclick=()=>{$('#cIn').value=b.dataset.ex;lfCheck()});
+$('#cClr').onclick=()=>{$('#cIn').value='';lfHits=new Map();lfManual=new Set();lfZone=-1;const t=$('#turtle');t.className='turtle bob';t.style.left=PZ_CTR[0]+'%';
+  $('#lfLock').classList.remove('show');lfRenderZones()};
+(()=>{const tr=$('#track'),t=$('#turtle');let dragging=false;
+  const pct=e=>{const r=tr.getBoundingClientRect();return Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100))};
+  tr.addEventListener('pointerdown',e=>{dragging=true;t.classList.add('drag');t.classList.remove('bob','shake');t.style.left=pct(e)+'%';tr.setPointerCapture(e.pointerId);e.preventDefault()});
+  tr.addEventListener('pointermove',e=>{if(dragging)t.style.left=pct(e)+'%'});
+  const up=e=>{if(!dragging)return;dragging=false;const x=pct(e);const z=x<PZ_SEP[0]?0:x<PZ_SEP[1]?1:x<PZ_SEP[2]?2:3;setZone(z,true)};
+  tr.addEventListener('pointerup',up);tr.addEventListener('pointercancel',up);
+})();
+$('#lfPoster').onclick=()=>$('#posterOv').classList.add('show');
+$('#posterOv').onclick=()=>$('#posterOv').classList.remove('show');
+$('#turtle').classList.add('bob');$('#turtle').style.left=PZ_CTR[0]+'%';lfRenderZones();
+
+/* --- Tree of Hope --- */
+let notes=store.get('tree',[]);
+function rng(seed){return()=>{seed=(seed*9301+49297)%233280;return seed/233280}}
+function drawTree(){
+  const n=notes.length,g=Math.min(1,n/30);
+  const leaf=`rgb(${Math.round(150-90*g)},${Math.round(130+60*g)},${Math.round(90-30*g)})`;
+  const r=rng(7);let blobs='';
+  if(n>0){for(let i=0;i<14;i++){const cx=500+(r()-.5)*560,cy=200+(r()-.5)*230,rad=(70+r()*60)*(.45+.55*g);blobs+=`<circle cx="${cx}" cy="${cy}" r="${rad}" fill="${leaf}" opacity="${.35+.5*g}"/>`}}
+  $('#treeSvg').innerHTML=`
+   <rect x="0" y="500" width="1000" height="62" fill="#a9cf8a"/>
+   ${blobs}
+   <path d="M470 520 C480 420 470 360 440 300 L470 300 C490 340 500 380 505 410 C515 360 530 320 560 290 L585 300 C545 350 530 420 535 520 Z" fill="#7a5233"/>
+   <g stroke="#7a5233" stroke-linecap="round" fill="none">
+    <path d="M455 305 C420 250 370 220 300 200" stroke-width="16"/><path d="M370 225 C340 180 330 150 330 110" stroke-width="10"/>
+    <path d="M330 205 C280 210 240 230 210 260" stroke-width="9"/><path d="M570 295 C610 240 670 210 730 200" stroke-width="16"/>
+    <path d="M650 225 C670 180 690 150 700 115" stroke-width="10"/><path d="M700 205 C750 215 790 240 815 270" stroke-width="9"/>
+    <path d="M505 300 C505 230 500 170 495 100" stroke-width="13"/><path d="M500 180 C460 150 430 130 410 90" stroke-width="7"/>
+    <path d="M500 160 C540 130 570 110 590 75" stroke-width="7"/></g>`;
+  const box=$('#tree');box.querySelectorAll('.note').forEach(e=>e.remove());
+  const pr=rng(42);
+  notes.forEach((nt,i)=>{const a=pr()*Math.PI*2,d=Math.sqrt(pr());const x=50+Math.cos(a)*d*31,y=36+Math.sin(a)*d*27;
+    const el=document.createElement('div');el.className='note '+nt.t;el.style.left=`calc(${x}% - 31px)`;el.style.top=`calc(${y}% - 28px)`;el.style.transform=`rotate(${(pr()-.5)*20}deg)`;el.textContent=nt.x;
+    el.onclick=()=>{$('#zoomTxt').textContent=nt.x;$('#zoomTxt').style.background=nt.t==='r'?'#ffc2d6':'#fff1a6';$('#zoom').classList.add('show')};box.appendChild(el)});
+  $('#trCount').textContent=`🩷 ${notes.filter(x=>x.t==='r').length} · 💛 ${notes.filter(x=>x.t==='s').length}`;
+}
+$('#zoom').onclick=()=>$('#zoom').classList.remove('show');
+$('#trAdd').onclick=()=>{const x=$('#trTxt').value.trim();if(!x)return;notes.push({t:$('#trType').value,x});store.set('tree',notes);$('#trTxt').value='';beep('pop');drawTree();if(notes.length%10===0)confetti()};
+$('#trTxt').addEventListener('keydown',e=>{if(e.key==='Enter')$('#trAdd').click()});
+let clrArm=false;$('#trClear').onclick=()=>{if(!clrArm){clrArm=true;$('#trClear').textContent='กดอีกครั้งเพื่อยืนยัน';setTimeout(()=>{clrArm=false;$('#trClear').textContent='ล้างต้นไม้'},2500);return}
+  notes=[];store.set('tree',notes);drawTree();clrArm=false;$('#trClear').textContent='ล้างต้นไม้'};
+
+/* --- Media --- */
+let mDone=store.get('media',{});
+function mItem([k,t,phs,d,url]){const tags=phs.map(p=>`<span class="pt" style="background:${PH[p].c}">${PH[p].name}</span>`).join('');
+  return `<label class="mi ${mDone[k]?'done':''}"><input type="checkbox" data-k="${k}" ${mDone[k]?'checked':''}><div><div class="mt">${t}</div><div class="md">${tags} ${d}</div>${url?`<a class="open" href="${url}" target="_blank" rel="noopener">เปิดสื่อ ↗</a>`:''}</div></label>`}
+function mDraw(){$('#mHand').innerHTML=MEDIA_HAND.map(mItem).join('');$('#mOnline').innerHTML=MEDIA_ON.map(mItem).join('');
+  $$('#t-media input[type=checkbox]').forEach(c=>c.onchange=()=>{mDone[c.dataset.k]=c.checked;store.set('media',mDone);mDraw()});
+  const all=MEDIA_HAND.length+MEDIA_ON.length,n=[...MEDIA_HAND,...MEDIA_ON].filter(m=>mDone[m[0]]).length;
+  $('#mProg').textContent=`เตรียมแล้ว ${n}/${all} รายการ${n===all?' 🎉 พร้อมสอน!':''}`}
+$('#mReset').onclick=()=>{mDone={};store.set('media',mDone);mDraw()};
+mDraw();
+
+/* init */
+setNotes();fit();go(cur);
+if(location.hash.slice(1)&&TOOLS[location.hash.slice(1)])openTool(location.hash.slice(1));
+</script>
+</body>
+</html>
