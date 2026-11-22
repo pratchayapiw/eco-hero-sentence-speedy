@@ -268,6 +268,18 @@ body.noanim .lays,body.noanim .lfx,body.noanim .fx{display:none}
 .arw{font-size:2.6cqw;color:#2f7d4f;flex:0 0 auto;animation:float 1.6s ease-in-out infinite}
 .num{flex:0 0 auto;width:3cqw;height:3cqw;border-radius:50%;background:#2f7d4f;color:#fff;font-family:'Kanit';font-size:1.6cqw;display:flex;align-items:center;justify-content:center}
 .tipbar{position:absolute;left:14%;right:14%;top:85%;text-align:center;background:#fff7d6;border:.22cqw solid #e9c55a;border-radius:3cqw;padding:.6cqw 1.4cqw;font-family:'Kanit';font-size:1.75cqw;color:#5a4500;animation:lrise .7s .9s both}
+.stk{position:absolute;padding:1.2cqw 1.3cqw;font-family:'Kanit';color:#1d2b45;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 .9cqw 1.6cqw rgba(0,0,0,.22);transform:rotate(var(--r));animation:stkin .8s cubic-bezier(.2,1.3,.4,1) var(--fd) both,stkf 4.5s ease-in-out calc(var(--fd) + .8s) infinite}
+.stk::before{content:'';position:absolute;top:-1.1cqw;left:50%;width:38%;height:2.2cqw;margin-left:-19%;background:rgba(255,255,255,.55);box-shadow:0 .2cqw .4cqw rgba(0,0,0,.08);transform:rotate(-2deg)}
+.stk.pk{background:linear-gradient(160deg,#ffc6d9,#f9a6c2)}
+.stk.yl{background:linear-gradient(160deg,#fff3a3,#f8df5f)}
+.stk.gr{background:linear-gradient(160deg,#cdf3c4,#9fe08f)}
+.stk .sn{font-family:'Kanit';font-weight:700;font-size:5.2cqw;line-height:1;color:#1d2b45}
+.stk .st{font-weight:600;font-size:2.15cqw;line-height:1.15;margin-top:.3cqw}
+.stk .sd{font-family:'Sarabun';font-weight:600;font-size:1.45cqw;line-height:1.25;margin-top:.5cqw;color:#2b4a35}
+.stk .sl2{font-family:'Nunito';font-weight:800;font-size:1.55cqw;margin-top:.6cqw;color:#1f5c37;white-space:nowrap}
+@keyframes stkin{from{opacity:0;transform:translateY(-8cqh) rotate(calc(var(--r) * 4)) scale(.8)}to{opacity:1;transform:rotate(var(--r))}}
+@keyframes stkf{0%,100%{transform:rotate(var(--r)) translateY(0)}50%{transform:rotate(var(--r)) translateY(-.8cqh)}}
+.note.g{background:#c9f2c7}
 /* ===== Eco-Crisis Lifeline (poster style) ===== */
 .lf{margin:-6px -8px;background:radial-gradient(circle at 20% 10%,#1e78c8,#0b4f95 60%,#083d78);border-radius:18px;padding:14px 16px 12px;color:#fff;font-family:'Kanit';position:relative;overflow:hidden}
 .lf::before{content:'';position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,.18) 2px,transparent 3px) 0 0/46px 46px;opacity:.35;pointer-events:none}
@@ -519,10 +531,10 @@ body.noanim .lays,body.noanim .lfx,body.noanim .fx{display:none}
       <!-- Tree -->
       <section class="tool" id="t-tree">
         <h2 class="tt">🌳 The Tree of Hope (Exit Ticket)</h2>
-        <p class="sub">ชมพู = กฎไวยากรณ์ที่ค้นพบ (3 ข้อ) · เหลือง = ประโยค Conditional ของฉัน (2 ประโยค) · ยิ่งโน้ตเยอะ ต้นไม้ยิ่งเขียว · แตะโน้ตเพื่อขยายอ่านหน้าชั้น</p>
+        <p class="sub">3-2-1 Exit Ticket: ชมพู = 3 Things I learned today · เหลือง = 2 Things I remember well · เขียว = 1 Promise to help the world (ประโยค If) · ยิ่งโน้ตเยอะ ต้นไม้ยิ่งเขียว · แตะโน้ตเพื่อขยายอ่านหน้าชั้น</p>
         <div class="row" style="margin-bottom:10px">
-          <select id="trType"><option value="r">🩷 Grammar rule</option><option value="s">💛 My sentence</option></select>
-          <input type="text" id="trTxt" style="flex:1;min-width:240px" placeholder="เช่น Never use will after if / If I were a hero, I would ...">
+          <select id="trType"><option value="r">🩷 3 Things I learned today</option><option value="s">💛 2 Things I remember well</option><option value="g">💚 1 Promise to help the world</option></select>
+          <input type="text" id="trTxt" style="flex:1;min-width:240px" placeholder="เช่น Never use will after if / If I use a cloth bag, I will reduce plastic.">
           <button class="btn" id="trAdd">➕ แปะบนต้นไม้</button>
           <button class="btn alt" id="trClear">ล้างต้นไม้</button>
           <span id="trCount" style="font-family:Kanit"></span>
@@ -691,11 +703,12 @@ const S = [
   say:['Your Commander will check your sentences!','Look at the clue for your zone. Fix the errors to bring the Turtle back to the SAFE ZONE!'],
   do:['แต่ละกลุ่มเขียนประโยค Type 1 + Type 2 เรื่องสิ่งแวดล้อม อย่างน้อย 2 ประโยค','ครูตรวจประโยคด้วย 🐢 Eco-Crisis Lifeline แล้วเลื่อนเต่าล็อกระดับ SAFE / WARNING / CRITICAL / CRISIS — นักเรียนดูคำใบ้และพิกัดการตรวจ 7 จุด แล้วแก้เอง (ครูไม่บอกคำตอบ)','กลุ่มที่เต่าเข้า SAFE ZONE ได้รับคะแนน','ถ้าเวลาพอ/คาบต่อเนื่อง: เล่น Eco Hero Sentence Race หรือบอร์ดเกม Eco Hero Planet Rescue (ดู 📦 สื่อการสอน)'],
   tools:['check','media','score','timer']},
- {img:'s23',ph:'evaluate',min:6,title:'The Tree of Hope (Exit Ticket)',
-  goal:'ประเมินรายบุคคล: กฎ 3 ข้อ + ประโยค 2 ประโยค',
-  say:['On the pink note, write 3 grammar rules you discovered.','On the yellow note, write 2 conditional sentences — Type 1 or 2.','Then stick them on the Tree of Hope!'],
-  do:['เก็บโพสต์อิทเป็นหลักฐานการประเมิน (ใช้เกณฑ์ของแผน)','พิมพ์ตัวอย่างบางใบลงต้นไม้ดิจิทัลเพื่ออ่านหน้าชั้น'],
-  tools:['tree','timer']},
+ {img:'s23n',ph:'evaluate',min:6,title:'The Tree of Hope — 3-2-1 Exit Ticket',
+  goal:'ประเมินรายบุคคลด้วย 3-2-1 Exit Ticket: 3 สิ่งที่เพิ่งรู้ · 2 สิ่งที่จำแม่น · 1 คำสัญญาช่วยโลก (ประโยค Conditional)',
+  say:['Time for our 3-2-1 Exit Ticket!','On the pink note, write 3 things you learned today.','On the yellow note, write 2 things you remember well.','On the green note, write 1 promise to help the world — use a First or Second Conditional sentence.','Then stick your notes on the Tree of Hope!'],
+  do:['แจกโพสต์อิท 3 สี/คน (ชมพู · เหลือง · เขียว) จับเวลา 5 นาที','โน้ตสีเขียวคือหลักฐานการเขียนประโยค Conditional รายบุคคล ตรวจด้วย Lifeline ได้','พิมพ์ตัวอย่างบางใบลงต้นไม้ดิจิทัลเพื่ออ่านหน้าชั้น'],
+  ans:'3 → เช่น If + V1 คู่กับ will · If + V2/were คู่กับ would · ไม่ใช้ will/would หลัง if · 2 → เช่น comma เมื่อ If ขึ้นก่อน / were ใช้ได้ทุกประธาน · 1 → เช่น If I use a cloth bag, I will reduce plastic. / If I were a Green Hero, I would plant more trees.',
+  tools:['tree','timer','check']},
  {img:'s24',ph:'evaluate',min:2,title:'You are the heroes of our world',
   goal:'ปิดบทเรียน สะท้อนคิด',
   say:['Look at our Tree of Hope — it is full of hope now!','Remember: small actions today, a better world tomorrow.','You are the heroes of our world!'],
@@ -761,7 +774,7 @@ const LAYERS={
  s17:[{r:R(300,145,880,225),a:'',e:'drop',ed:0},{r:R(490,330,690,595),a:'pulse2',e:'lin',ed:.4,ld:3}],
  s18:[{r:R(160,125,1010,200),a:'',e:'drop',ed:0},{r:R(670,400,1090,495),a:'wiggle',e:'slideR',ed:.6,ld:4},{r:R(470,445,720,690),a:'grow',e:'rise',ed:.9,ld:4,o:'50% 95%'}],
  s19:[{r:R(350,160,830,230),a:'',e:'drop',ed:0},{r:R(150,325,345,385),a:'',e:'slideL',ed:.5},{r:R(150,390,345,450),a:'',e:'slideL',ed:.75},{r:R(150,450,345,510),a:'',e:'slideL',ed:1},{r:R(150,510,345,575),a:'',e:'slideL',ed:1.25},{r:R(150,575,345,635),a:'',e:'slideL',ed:1.5},{r:R(405,440,880,640),a:'hop',e:'rise',ed:.6,ld:2.2},{r:R(375,615,885,725),a:'breath',e:'rise',ed:1.8,ld:2.4}],
- s23:[{r:R(130,130,1050,245),a:'',e:'drop',ed:0},{r:R(0,95,700,740),a:'swayS',e:'',ed:0,ld:7,o:'15% 100%'},{r:R(775,250,1005,470),a:'float',e:'slideR',ed:.6,ld:3.8},{r:R(700,430,930,655),a:'float',e:'slideR',ed:1,ld:4.4}],
+ s23n:[{r:R(130,130,1050,245),a:'',e:'drop',ed:0},{r:R(0,95,700,740),a:'swayS',e:'',ed:0,ld:7,o:'15% 100%'}],
  s24:[{r:R(60,90,1110,740),a:'breath',e:'lin',ed:0,ld:8},{r:R(215,390,950,580),a:'',e:'lin',ed:.8}]
 };
 const FX={
@@ -785,7 +798,7 @@ const FX={
  s17:[{t:'halo',r:R(470,320,710,600)}],
  s18:[{t:'halo',r:R(500,500,680,640)},{t:'spk',p:PT(590,520),dl:.2},{t:'spk',p:PT(560,580),dl:.9},{t:'spk',p:PT(630,560),dl:1.5},{t:'glint',r:R(160,125,1010,200),d:5}],
  s19:[{t:'spk',p:PT(470,330),dl:.2},{t:'spk',p:PT(870,360),dl:.8},{t:'spk',p:PT(650,300),dl:1.3}],
- s23:[{t:'dots',r:R(570,437,700,445)},{t:'spk',p:PT(560,450),dl:.3},{t:'spk',p:PT(700,425),dl:1},{t:'spk',p:PT(300,600),dl:1.6}],
+ s23n:[{t:'dots',r:R(570,437,700,445)},{t:'spk',p:PT(560,450),dl:.3},{t:'spk',p:PT(700,425),dl:1},{t:'spk',p:PT(300,600),dl:1.6}],
  s20a:[{t:'spk',p:PT(150,170),dl:.2},{t:'spk',p:PT(1020,170),dl:1}],s20b:[{t:'spk',p:PT(150,170),dl:.5},{t:'spk',p:PT(1020,170),dl:1.2},{t:'spk',p:PT(1050,300),dl:.8}],s20c:[{t:'spk',p:PT(330,150),dl:.3},{t:'spk',p:PT(850,150),dl:1.1}],
  s24:[...[...Array(16)].map((_,i)=>({t:'fall',p:PT(40+i*72,90),c:['#ff9ec4','#ffe066','#9be3ff','#b6f09c','#d3b3ff','#ffc078'][i%6],dl:-Math.random()*7,d:6+Math.random()*4})),{t:'halo',r:R(400,280,780,560)}]
 };
@@ -809,6 +822,9 @@ function buildLiving(s){
     X.appendChild(e)});
 }
 const STATIC={
+ s23n:`<div class="stk pk" style="left:58.2%;top:23.5%;width:19.9%;height:30.7%;--r:-3deg;--fd:0s"><b class="sn">3</b><span class="st">Things I learned today</span></div>
+  <div class="stk yl" style="left:78.5%;top:26.5%;width:19.1%;height:30%;--r:3.5deg;--fd:.4s"><b class="sn">2</b><span class="st">Things I remember well</span></div>
+  <div class="stk gr" style="left:61.7%;top:57.3%;width:28.1%;height:34.9%;--r:-1.5deg;--fd:.8s"><b class="sn">1 <span style="font-size:.6em">🌍</span></b><span class="st">Promise to help the world</span><span class="sd">Write it as a First or Second Conditional sentence.</span><span class="sl2">If I ________, I will / would ________.</span></div>`,
  s20a:`<div class="sl-title">🔄 Step 6A: Flip the Sentence! <span style="color:#2f7d4f">First Conditional</span></div>
   <div class="sl-sub">เอา Main Clause ขึ้นต้นประโยคได้ · ความหมายเหมือนเดิม 100%</div>
   <div class="hrow" style="top:25%;height:15%;animation-delay:.5s"><span class="rl">① If ขึ้นก่อน</span><span class="ck bl"><small>If Clause</small>If we recycle</span><span class="cm">,</span><span class="ck or"><small>Main Clause</small>we will reduce waste.</span></div>`,
@@ -838,7 +854,7 @@ const MEDIA_HAND=[
  ['role','การ์ดบทบาท + บัตรคำแยกตามบทบาท',['elaborate'],'Condition Keeper 5 ใบ · Action Keeper 6 ใบ · Eco Keeper 6 ใบ · Result Keeper (will 4 + would 4) · Guardian &amp; Writer — แยกใส่ถุงตามบทบาทก่อนคาบ'],
  ['book','Mission Record Book',['elaborate','evaluate'],'บันทึกทีม + Writing Journey · Record Sheet · Green Reel Storyboard (ใช้เป็นหลักฐานการประเมิน)'],
  ['life','Eco-Crisis Lifeline (ฉบับกระดาษ)',['elaborate'],'มาตรวัด Critical / Warning / Safe Zone สำหรับกลุ่มที่ไม่ได้ใช้อุปกรณ์'],
- ['post','โพสต์อิทสีชมพู + สีเหลือง และโปสเตอร์ Tree of Hope',['evaluate'],'ชมพู = กฎ 3 ข้อ · เหลือง = ประโยค 2 ประโยค · 1 ชุดต่อนักเรียน 1 คน'],
+ ['post','โพสต์อิท 3 สี (ชมพู · เหลือง · เขียว) และโปสเตอร์ Tree of Hope',['evaluate'],'3-2-1 Exit Ticket: ชมพู = 3 Things I learned · เหลือง = 2 Things I remember well · เขียว = 1 Promise (ประโยค If) · 1 ชุดต่อนักเรียน 1 คน'],
  ['prize','รางวัลประจำรอบ / สติกเกอร์ Green Hero',['elaborate'],'สำหรับกลุ่มที่ตอบถูกและเร็วที่สุดในแต่ละรอบ']
 ];
 const MEDIA_ON=[
@@ -1214,8 +1230,8 @@ function drawTree(){
   const pr=rng(42);
   notes.forEach((nt,i)=>{const a=pr()*Math.PI*2,d=Math.sqrt(pr());const x=50+Math.cos(a)*d*31,y=36+Math.sin(a)*d*27;
     const el=document.createElement('div');el.className='note '+nt.t;el.style.left=`calc(${x}% - 31px)`;el.style.top=`calc(${y}% - 28px)`;el.style.transform=`rotate(${(pr()-.5)*20}deg)`;el.textContent=nt.x;
-    el.onclick=()=>{$('#zoomTxt').textContent=nt.x;$('#zoomTxt').style.background=nt.t==='r'?'#ffc2d6':'#fff1a6';$('#zoom').classList.add('show')};box.appendChild(el)});
-  $('#trCount').textContent=`🩷 ${notes.filter(x=>x.t==='r').length} · 💛 ${notes.filter(x=>x.t==='s').length}`;
+    el.onclick=()=>{$('#zoomTxt').textContent=nt.x;$('#zoomTxt').style.background={r:'#ffc2d6',s:'#fff1a6',g:'#c9f2c7'}[nt.t];$('#zoom').classList.add('show')};box.appendChild(el)});
+  $('#trCount').textContent=`🩷 ${notes.filter(x=>x.t==='r').length} · 💛 ${notes.filter(x=>x.t==='s').length} · 💚 ${notes.filter(x=>x.t==='g').length}`;
 }
 $('#zoom').onclick=()=>$('#zoom').classList.remove('show');
 $('#trAdd').onclick=()=>{const x=$('#trTxt').value.trim();if(!x)return;notes.push({t:$('#trType').value,x});store.set('tree',notes);$('#trTxt').value='';beep('pop');drawTree();if(notes.length%10===0)confetti()};
